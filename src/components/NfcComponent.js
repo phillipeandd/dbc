@@ -9,7 +9,11 @@ import {
   Dimensions,
 } from "react-native";
 import NfcManager, { NfcTech, Ndef } from "react-native-nfc-manager";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  MaterialCommunityIcons,
+  Ionicons,
+} from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../context/AuthProvider";
 
@@ -25,8 +29,6 @@ const NfcComponent = ({ navigation }) => {
   );
 
   //console.log("userData", userData)
-
-  
 
   // Function to initialize NFC Manager
   const initializeNFC = async () => {
@@ -48,7 +50,6 @@ const NfcComponent = ({ navigation }) => {
     }
   };
 
-
   // Check if NFC is supported and enabled
   const checkNfcState = async () => {
     try {
@@ -62,7 +63,10 @@ const NfcComponent = ({ navigation }) => {
       const isEnabled = await NfcManager.isEnabled();
       console.log("NFC Enabled:", isEnabled);
       if (!isEnabled) {
-        Alert.alert("Error", "NFC is not enabled. Please enable it in settings.");
+        Alert.alert(
+          "Error",
+          "NFC is not enabled. Please enable it in settings."
+        );
         return false;
       }
 
@@ -74,7 +78,6 @@ const NfcComponent = ({ navigation }) => {
     }
   };
 
-
   // Write a link to the NFC tag
   const writeNFC = async (link) => {
     try {
@@ -85,14 +88,17 @@ const NfcComponent = ({ navigation }) => {
       await NfcManager.requestTechnology(NfcTech.Ndef);
       console.log("NFC Tag detected, ready for operations.");
 
-
       // Check if the tag is compatible with NDEF format
       const tag = await NfcManager.getTag();
       if (!tag.canMakeReadOnly()) {
         throw new Error("NFC tag is not writable.");
       }
       // Encode the link to NDEF format
-      const bytes = Ndef.encodeMessage([Ndef.uriRecord(`https://bc.exploreanddo.com/get-web-nfc-user/${userId}`)]);
+      const bytes = Ndef.encodeMessage([
+        Ndef.uriRecord(
+          `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`
+        ),
+      ]);
       if (!bytes) {
         Alert.alert("Error", "Failed to encode NFC message.");
         return;
@@ -131,10 +137,14 @@ const NfcComponent = ({ navigation }) => {
       }
 
       // Check if the tag object has the canMakeReadOnly() method
-      if (typeof tag.canMakeReadOnly !== 'function') {
+      if (typeof tag.canMakeReadOnly !== "function") {
         throw new Error("tag.canMakeReadOnly is not a function.");
       }
-      const bytes = Ndef.encodeMessage([Ndef.uriRecord(`https://bc.exploreanddo.com/get-web-nfc-user/${userId}`)]);
+      const bytes = Ndef.encodeMessage([
+        Ndef.uriRecord(
+          `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`
+        ),
+      ]);
       if (!bytes) throw new Error("Failed to encode NFC message.");
 
       console.log("Encoded NFC message:", bytes);
@@ -166,43 +176,43 @@ const NfcComponent = ({ navigation }) => {
 
   const writeNFCreconnect2 = async (link) => {
     try {
-        console.log("Attempting to write NFC data...");
-        await cancelNfcSession(); // Clean up previous sessions
-        await NfcManager.requestTechnology(NfcTech.Ndef); // Request NFC tech
+      console.log("Attempting to write NFC data...");
+      await cancelNfcSession(); // Clean up previous sessions
+      await NfcManager.requestTechnology(NfcTech.Ndef); // Request NFC tech
 
-        const tag = await NfcManager.getTag();
-        console.log("Tag object:", tag);
+      const tag = await NfcManager.getTag();
+      console.log("Tag object:", tag);
 
-        // Check tag compatibility
-        if (!tag.techTypes.includes("android.nfc.tech.Ndef")) {
-            throw new Error("NFC tag is not NDEF-compatible.");
-        }
+      // Check tag compatibility
+      if (!tag.techTypes.includes("android.nfc.tech.Ndef")) {
+        throw new Error("NFC tag is not NDEF-compatible.");
+      }
 
-        // Format if needed
-        if (!Ndef.isNdef(tag)) {
-            console.log("Formatting tag for NDEF...");
-            await NfcManager.formatNdef();
-        }
+      // Format if needed
+      if (!Ndef.isNdef(tag)) {
+        console.log("Formatting tag for NDEF...");
+        await NfcManager.formatNdef();
+      }
 
-        // Encode data
-        const bytes = Ndef.encodeMessage([Ndef.uriRecord(link)]);
-        if (!bytes) throw new Error("Failed to encode NFC message.");
+      // Encode data
+      const bytes = Ndef.encodeMessage([Ndef.uriRecord(link)]);
+      if (!bytes) throw new Error("Failed to encode NFC message.");
 
-        console.log("Writing NFC data:", bytes);
-        await NfcManager.writeNdefMessage(bytes);
+      console.log("Writing NFC data:", bytes);
+      await NfcManager.writeNdefMessage(bytes);
 
-        Alert.alert("Success", "Link successfully written to the NFC tag!");
+      Alert.alert("Success", "Link successfully written to the NFC tag!");
     } catch (error) {
-        console.error("Error writing to NFC:", error);
-        Alert.alert("Error", error.message || "Failed to write to NFC tag.");
+      console.error("Error writing to NFC:", error);
+      Alert.alert("Error", error.message || "Failed to write to NFC tag.");
     } finally {
-        await cancelNfcSession();
-        console.log("NFC session cleaned up.");
+      await cancelNfcSession();
+      console.log("NFC session cleaned up.");
     }
-};
+  };
 
-const writeNFCreconnect3 = async (link) => {
-  try {
+  const writeNFCreconnect3 = async (link) => {
+    try {
       console.log("Attempting to write NFC data...");
       await cancelNfcSession(); // Clean up any previous sessions
       await NfcManager.requestTechnology(NfcTech.Ndef); // Request NFC technology
@@ -214,7 +224,7 @@ const writeNFCreconnect3 = async (link) => {
 
       // Check if the tag supports NDEF
       if (!tag.techTypes.includes("android.nfc.tech.Ndef")) {
-          throw new Error("The tag is not NDEF compatible.");
+        throw new Error("The tag is not NDEF compatible.");
       }
 
       // Encode the link to NDEF format
@@ -226,18 +236,15 @@ const writeNFCreconnect3 = async (link) => {
       // Write the encoded message to the NFC tag
       await NfcManager.ndefHandler.writeNdefMessage(bytes);
       Alert.alert("Success", "Link successfully written to the NFC tag!");
-  } catch (error) {
+    } catch (error) {
       console.error("Error writing to NFC:", error);
       Alert.alert("Error", error.message || "Failed to write to NFC tag.");
-  } finally {
+    } finally {
       // Ensure the session is cleaned up in all cases
       await cancelNfcSession();
       console.log("NFC session cleaned up.");
-  }
-};
-
-
-
+    }
+  };
 
   // Handle writing to the NFC tag
   const handleWrite = async () => {
@@ -247,8 +254,6 @@ const writeNFCreconnect3 = async (link) => {
       await writeNFCreconnect3(link);
     }
   };
-
-
 
   // Initialize NFC on component mount
   useEffect(() => {
@@ -262,44 +267,40 @@ const writeNFCreconnect3 = async (link) => {
   // UI Render
   return (
     <View style={styles.rowReader}>
-      <LinearGradient
-        colors={["#8C78F0", "#E9D7FC", "#8C78F0"]}
-        start={{ x: 1, y: 0 }}
-        end={{ x: 0, y: 0 }}
+      <View
+        // colors={["#8C78F0", "#E9D7FC", "#8C78F0"]}
+        // start={{ x: 2, y: 1 }}
+        // end={{ x: 0, y: 2 }}
         style={styles.gradientButtonContainer}
       >
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleWrite}
-        >
-          <Text style={styles.buttonText}>
-            <MaterialCommunityIcons
-              name="cellphone-nfc"
-              size={15}
-              color={"white"}
-            />{" "}
-            Write to NFC
-          </Text>
+        <TouchableOpacity style={styles.button} onPress={handleWrite}>
+          <MaterialCommunityIcons
+            name="cellphone-nfc"
+            size={20}
+            color={"#B37F4D"}
+          />
+          <Text style={styles.buttonText}>NFC</Text>
         </TouchableOpacity>
-      </LinearGradient>
-      <LinearGradient
-        colors={["#8C78F0", "#E9D7FC", "#8C78F0"]}
-        start={{ x: 1, y: 0 }}
-        end={{ x: 0, y: 0 }}
+      </View>
+      <View
+        // colors={["#B4804A", "#FABD5F", "#FABD5F"]}
+        // start={{ x: 2, y: 1 }}
+        // end={{ x: 0, y: 2 }}
         style={styles.gradientButtonContainer}
       >
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
             handleClickVibration();
-            navigation.navigate("Share Profile", { qrData: JSON.stringify(userData) });
+            navigation.navigate("Share Profile", {
+              qrData: JSON.stringify(userData),
+            });
           }}
         >
-          <Text style={styles.buttonText}>
-            <FontAwesome name="send-o" size={15} color={"white"} /> Share
-          </Text>
+          <Ionicons name="share-social-sharp" size={20} color={"#B1804D"} />
+          <Text style={styles.buttonText}>Share</Text>
         </TouchableOpacity>
-      </LinearGradient>
+      </View>
     </View>
   );
 };
@@ -309,22 +310,31 @@ export default NfcComponent;
 const styles = StyleSheet.create({
   rowReader: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    margin: 20,
+    justifyContent: "center",
+    gap: 25,
+    // margin: 20,
   },
   gradientButtonContainer: {
-    borderRadius: 15,
+    display: "flex",
+    flexDirection: "row",
+    // borderRadius: 50,
   },
   button: {
-    padding: 15,
-    borderRadius: 15,
+    padding: 10,
+    borderRadius: 30,
+    width: 140,
+    height: 40,
+    borderColor: "#FABD5F",
+    borderWidth: 1,
     alignItems: "center",
-    justifyContent: "center",
-    //width:140
+    justifyContent: "space-evenly",
+    display: "flex",
+    flexDirection: "row",
+    // width: 140,
   },
   buttonText: {
-    color: "white",
+    color: "#2B2C2B",
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: "700",
   },
 });

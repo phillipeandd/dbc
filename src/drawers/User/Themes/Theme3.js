@@ -23,6 +23,7 @@ import { useAuth } from "../../../context/AuthProvider";
 import NfcComponent from "../../../components/NfcComponent";
 
 import { LinearGradient } from "expo-linear-gradient";
+import Svg, { Path } from "react-native-svg";
 const Theme3 = ({ navigation }) => {
   const {
     userId,
@@ -33,6 +34,7 @@ const Theme3 = ({ navigation }) => {
   } = useAuth();
   //console.log("social",social)
   //console.log("seeUser", seeUser);
+  const { width, height } = Dimensions.get("window");
   const fetchData = useCallback(() => {
     const apiUrl = `https://bc.exploreanddo.com/api/get-company-details/${userId}`;
     axios
@@ -80,10 +82,11 @@ const Theme3 = ({ navigation }) => {
 
   const handleWebsitePress = () => {
     handleClickVibration();
-    const website = `${seeUser?.company?.website
-      ? seeUser?.company?.website
-      : "http://www.google.com"
-      }`;
+    const website = `${
+      seeUser?.company?.website
+        ? seeUser?.company?.website
+        : "http://www.google.com"
+    }`;
     //const website = "http://www.google.com";
     Linking.openURL(website);
   };
@@ -378,135 +381,230 @@ const Theme3 = ({ navigation }) => {
     }, 2000);
   }, []);
 
+  console.log("loaction:", seeUser);
+
   return (
-    <ScrollView refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-    }>
-      <View style={styles.container}>
-        <LinearGradient
-          colors={['#8C78F0', '#E9D7FC', '#8C78F0']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 0, y: 0 }}
-          style={styles.profileCard}
-        >
-
-          <ImageBackground
-            source={require('../../../../assets/circle3.3.png')}
-            style={styles.profilebgImage}
-          >
-            {seeUser && seeUser?.user?.userImage ? (
-              <Image
-                source={{
-                  uri: `https://bc.exploreanddo.com/${seeUser.user.userImage}`,
-                }}
-                style={styles.avatar}
-              />
-            ) : (
-              <Image
-                source={require('../../../../assets/user.jpg')}
-                style={styles.avatar}
-              />
-            )}
-          </ImageBackground>
-
-          <View style={[styles.infoRow, { justifyContent: "space-between" }]}>
-            <View>
-              <Text style={styles.name}>{seeUser?.user?.firstname} {seeUser?.user?.lastname}</Text>
-              <Text style={styles.title}> {seeUser?.user?.user_details?.title}</Text>
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingTop: Dimensions.get("window").height - 825,
+      }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <ImageBackground
+        source={require("../../../../assets/them3Background.png")}
+        style={{ flex: 1 }}
+        resizeMode="repeat"
+      >
+        <View style={styles.container}>
+          <Image
+            source={require("../../../../assets/them3Banner.png")}
+            width={"100%"}
+            height={"100px"}
+            style={styles.them3Banner}
+          />
+          <View style={styles.profileCard}>
+            <View style={[styles.infoRow]}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text style={styles.name}>
+                  {seeUser?.user?.firstname} {seeUser?.user?.lastname}
+                </Text>
+                <Text style={styles.title}>
+                  {seeUser?.user?.user_details?.title}
+                </Text>
+                <Text style={styles.companyName}>
+                  {seeUser?.company?.companyname}
+                </Text>
+              </View>
             </View>
-
-            {seeUser && seeUser?.company?.logo ? (
-              <Image
-                source={{
-                  uri: `https://bc.exploreanddo.com/${seeUser.company.logo}`,
-                }}
-                style={styles.icon}
-                resizeMode="contain"
-              />
-            ) : (
-              <Image
-                source={require("../../../../assets/social/speclogo.png")}
-                style={styles.icon}
-                resizeMode="contain"
-              />
-            )}
+            <View style={styles.profilebgImage}>
+              {seeUser && seeUser?.user?.userImage ? (
+                <Image
+                  source={{
+                    uri: `https://bc.exploreanddo.com/${seeUser.user.userImage}`,
+                  }}
+                  style={styles.avatar}
+                />
+              ) : (
+                <Image
+                  source={require("../../../../assets/user.jpg")}
+                  style={styles.avatar}
+                />
+              )}
+              <View style={{ position: "relative" }}>
+                {seeUser && seeUser?.company?.logo ? (
+                  <Image
+                    source={{
+                      uri: `https://bc.exploreanddo.com/${seeUser.company.logo}`,
+                    }}
+                    style={styles.icon}
+                  />
+                ) : (
+                  <Image
+                    source={require("../../../../assets/social/speclogo.png")}
+                    style={styles.icon}
+                  />
+                )}
+              </View>
+            </View>
+          </View>
+          <View style={styles.socialMediaBg}>
+            <View style={styles.socialMediaCircle}>
+              <FontAwesome name={"facebook-f"} size={20} color={"#FA4A4A"} />
+            </View>
+            <View style={styles.socialMediaCircle}>
+              <FontAwesome name={"whatsapp"} size={20} color={"#FA4A4A"} />
+            </View>
+            <View style={styles.socialMediaCircle}>
+              <FontAwesome name={"linkedin"} size={20} color={"#FA4A4A"} />
+            </View>
+            <View style={styles.socialMediaCircle}>
+              <FontAwesome name={"instagram"} size={20} color={"#FA4A4A"} />
+            </View>
+          </View>
+          <View style={styles.informationContainer}>
+            <View style={styles.informationBg}>
+              <View style={styles.svgContainer}>
+                <TouchableOpacity onPress={handlePhonePress}>
+                  <Svg width="50" height="50" viewBox="0 0 184.751 184.751">
+                    <Path
+                      d="M0,92.375l46.188-80h92.378l46.185,80l-46.185,80H46.188L0,92.375z"
+                      fill="#FA4A4A"
+                    />
+                  </Svg>
+                  <MaterialIcons
+                    name="phone"
+                    size={25}
+                    color={"#FFF"}
+                    style={styles.socialIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.squareLeft}>
+                <Text style={styles.holderText}>Mobile Number</Text>
+                <Text style={styles.infoText}>{seeUser?.user?.phone}</Text>
+              </View>
+            </View>
+            <View style={styles.informationBg}>
+              <View style={styles.svgContainer}>
+                <TouchableOpacity onPress={handleEmailPress}>
+                  <Svg width="50" height="50" viewBox="0 0 184.751 184.751">
+                    <Path
+                      d="M0,92.375l46.188-80h92.378l46.185,80l-46.185,80H46.188L0,92.375z"
+                      fill="#FA4A4A"
+                    />
+                  </Svg>
+                  <MaterialIcons
+                    name="mail"
+                    size={25}
+                    color={"#FFF"}
+                    style={styles.socialIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.squareLeft}>
+                <Text style={styles.holderText}>E-mail address</Text>
+                <Text style={styles.infoText}>{seeUser?.user?.email}</Text>
+              </View>
+            </View>
+            <View style={styles.informationBg}>
+              <View style={styles.svgContainer}>
+                <TouchableOpacity onPress={handleWebsitePress}>
+                  <Svg width="50" height="50" viewBox="0 0 184.751 184.751">
+                    <Path
+                      d="M0,92.375l46.188-80h92.378l46.185,80l-46.185,80H46.188L0,92.375z"
+                      fill="#FA4A4A"
+                    />
+                  </Svg>
+                  <MaterialCommunityIcons
+                    name="web"
+                    size={25}
+                    color={"#FFF"}
+                    style={styles.socialIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.squareLeft}>
+                <Text style={styles.holderText}>Website</Text>
+                <Text style={styles.infoText}>
+                  {seeUser?.socialize?.website ||
+                    seeUser?.company?.website ||
+                    ""}
+                </Text>
+              </View>
+            </View>
           </View>
 
-        </LinearGradient>
-        <LinearGradient
-          colors={['#8C78F0', '#E9D7FC', '#8C78F0']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 0, y: 0 }}
-          style={[styles.infoContainer, { backgroundColor: '#E9D7FC' }]}
-        >
-          <TouchableOpacity style={styles.infoRow} onPress={handlePhonePress}>
-            <View style={styles.iconContainer}>
-              <MaterialIcons
-                name="phone"
-                size={25}
-                color={"white"}
-              />
-            </View>
-            <View>
-              <Text style={styles.infoTextHead}>Phone</Text>
-              <Text style={styles.infoText}>{seeUser?.user?.phone}</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.infoRow} onPress={handleEmailPress}>
-            <View style={styles.iconContainer}>
-              <MaterialIcons
-                name="alternate-email"
-                size={25}
-                color={"white"}
+          {/* <View style={[styles.infoContainer]}>
+            <TouchableOpacity style={styles.infoRow} onPress={handlePhonePress}>
+              <View style={styles.iconContainer}>
+                <MaterialIcons name="phone" size={25} color={"white"} />
+              </View>
+              <View>
+                <Text style={styles.infoTextHead}>Phone</Text>
+                <Text style={styles.infoText}>{seeUser?.user?.phone}</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.infoRow} onPress={handleEmailPress}>
+              <View style={styles.iconContainer}>
+                <MaterialIcons
+                  name="alternate-email"
+                  size={25}
+                  color={"white"}
+                />
+              </View>
+              <View>
+                <Text style={styles.infoTextHead}>Email</Text>
+                <Text style={styles.infoText}>{seeUser?.user?.email}</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.infoRow}
+              onPress={handleWebsitePress}
+            >
+              <View style={styles.iconContainer}>
+                <MaterialCommunityIcons
+                  name="web-check"
+                  size={25}
+                  color={"white"}
+                />
+              </View>
 
-              />
-            </View>
-            <View>
-              <Text style={styles.infoTextHead}>Email</Text>
-              <Text style={styles.infoText}>{seeUser?.user?.email}</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.infoRow} onPress={handleWebsitePress}>
-            <View style={styles.iconContainer}>
-              <MaterialCommunityIcons
-                name="web-check"
-                size={25}
-                color={"white"}
-              />
-            </View>
+              <View>
+                <Text style={styles.infoTextHead}>Website</Text>
 
-            <View>
-              <Text style={styles.infoTextHead}>Website</Text>
+                <Text style={styles.infoText}>
+                  {seeUser?.socialize?.website ||
+                    seeUser?.company?.website ||
+                    ""}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View> */}
+          <NfcComponent navigation={navigation} />
 
-              <Text style={styles.infoText}>
-                {seeUser?.socialize?.website || seeUser?.company?.website || ''}
-              </Text>
-
-            </View>
-          </TouchableOpacity>
-
-        </LinearGradient>
-        <NfcComponent navigation={navigation} />
-
-        <ImageBackground
-          source={require('../../../../assets/socialbackground.png')}
-          style={styles.backgroundImage}
-          resizeMode="cover"
-        >
-          <FlatList
-            data={socialKeys
-              .filter((type) => {
-                const value = social[type];
-                return value !== "null" && value !== null && value !== "";
-              })
-              .map((type) => ({ type, value: social[type] }))}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.type}
-            numColumns={4}
-            contentContainerStyle={styles.flatListContainer}
-          />
-        </ImageBackground>
-      </View>
+          <ImageBackground
+            source={require("../../../../assets/socialbackground.png")}
+            style={styles.backgroundImage}
+            resizeMode="cover"
+          >
+            <FlatList
+              data={socialKeys
+                .filter((type) => {
+                  const value = social[type];
+                  return value !== "null" && value !== null && value !== "";
+                })
+                .map((type) => ({ type, value: social[type] }))}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.type}
+              numColumns={4}
+              contentContainerStyle={styles.flatListContainer}
+            />
+          </ImageBackground>
+        </View>
+      </ImageBackground>
     </ScrollView>
   );
 };
@@ -516,35 +614,33 @@ export default Theme3;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
-    paddingBottom: Dimensions.get('window').width * 1,
-    alignItems: 'center',
-    paddingTop: 50
+    paddingBottom: Dimensions.get("window").height / 10,
+    alignItems: "center",
+  },
+  them3Banner: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height - 610,
+    objectFit: "cover",
   },
   profilebgImage: {
     flex: 1,
-    width: '100%',
-    height: "auto",
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
+    marginTop: Dimensions.get("window").height - 970,
+    // marginRight: -200,
   },
   avatar: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: Dimensions.get("window").width / 2.5,
+    height: Dimensions.get("window").width / 2.5,
+    borderRadius: Dimensions.get("window").width / 2,
     marginBottom: 45,
-    borderWidth: 2,
-    borderColor: "white"
+    borderWidth: 5,
+    borderColor: "#FA4A4A",
+    objectFit: "fill",
   },
   profileCard: {
-    width: '80%',
-    borderRadius: 15,
-    // padding: 10,
-    alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 50,
-
+    width: "auto",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
   },
   buttonContent: {
     width: 50,
@@ -583,66 +679,133 @@ const styles = StyleSheet.create({
 
   name: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#1D334F",
+    textAlign: "left",
   },
   title: {
-    fontSize: 18,
-    color: '#333',
-    textAlign: 'center',
+    fontSize: 16,
+    color: "#FA4A4A",
+    fontWeight: "500",
+    textAlign: "left",
+  },
+  companyName: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#454545",
   },
   iconContainer: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "black",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 10,
     borderWidth: 2,
-    borderColor: "white"
+    borderColor: "white",
   },
   icon: {
-    width: 40,
-    height: 40,
-    borderRadius: 5,
-    marginTop: 10,
+    width: Dimensions.get("window").width / 8,
+    height: Dimensions.get("window").width / 8,
+    borderRadius: Dimensions.get("window").width / 8,
+    borderWidth: 2,
+    borderColor: "white",
+    position: "absolute",
+    top: -85,
+    left: 110,
+    bottom: 0,
+    objectFit: "fill",
   },
   backgroundImage: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 30
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 30,
   },
   infoContainer: {
-    width: '80%',
+    width: "80%",
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-
   },
   infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
     gap: 25,
     padding: 5,
   },
   infoTextHead: {
     fontSize: 16,
-    color: '#895ECD',
-    fontWeight: 'bold',
+    color: "#895ECD",
+    fontWeight: "bold",
   },
   infoText: {
     fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
+    color: "#1D334F",
+    fontWeight: "bold",
+  },
+  socialMediaBg: {
+    backgroundColor: "#ECEFF1",
+    width: "100%",
+    height: 50,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+  },
+  informationContainer: {
+    marginVertical: 20,
+  },
+  informationBg: {
+    width: "auto",
+    display: "flex",
+    flexDirection: "row",
+    marginHorizontal: 10,
+    justifyContent: "space-between",
+    allignItems: "center",
+    marginVertical: 10,
+  },
+  holderText: {
+    color: "#1D334F",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  square: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#FA4A4A",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  squareLeft: {
+    width: "80%",
+    height: 50,
+    gap: 4,
+    backgroundColor: "#ECEFF1",
+    borderRadius: 5,
+    marginHorizontal: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  svgContainer: {
+    position: "relative",
+    width: 50,
+    height: 50,
+  },
+  socialIcon: {
+    position: "absolute",
+    top: "50%", // Adjust based on how centered you want the icon
+    left: "50%",
+    transform: [{ translateX: -12.5 }, { translateY: -12.5 }], // Centering icon by adjusting it
   },
 });

@@ -24,15 +24,16 @@ import axios from "axios";
 import { useAuth } from "../../../context/AuthProvider";
 import NfcComponent from "../../../components/NfcComponent";
 import { RefreshControl } from "react-native";
+import { Row } from "react-native-table-component";
+import { he } from "date-fns/locale";
 
 const Theme2 = ({ navigation }) => {
   const { width, height } = Dimensions.get("window");
-  const {
-    userId,
-    handleClickVibration,
-    seeUser,
-    setSeeUser,
-  } = useAuth();
+  const { userId, handleClickVibration, seeUser, setSeeUser } = useAuth();
+  const fontSize = width / 17;
+  const avatarSize = width / 2.5;
+  const logSize = width / 9;
+
   //console.log("seeUser", seeUser)
   const fetchData = useCallback(() => {
     const apiUrl = `https://bc.exploreanddo.com/api/get-company-details/${userId}`;
@@ -82,8 +83,9 @@ const Theme2 = ({ navigation }) => {
 
   const handlePhonePress = () => {
     handleClickVibration();
-    const phoneNumber = `${seeUser?.company?.phone ? seeUser?.company?.phone : ""
-      }`;
+    const phoneNumber = `${
+      seeUser?.company?.phone ? seeUser?.company?.phone : ""
+    }`;
     Linking.openURL(`tel:${phoneNumber}`);
   };
 
@@ -94,18 +96,20 @@ const Theme2 = ({ navigation }) => {
   };
   const handleMessagePress = () => {
     handleClickVibration();
-    const phoneNumber = `${seeUser?.company?.phone ? seeUser?.company?.phone : ""
-      }`;
+    const phoneNumber = `${
+      seeUser?.company?.phone ? seeUser?.company?.phone : ""
+    }`;
     const message = "Hello, I hope you're doing well!";
     Linking.openURL(`sms:${phoneNumber}?body=${encodeURIComponent(message)}`);
   };
 
   const handleWebsitePress = () => {
     handleClickVibration();
-    const website = `${seeUser?.socialize?.website
-      ? seeUser?.socialize?.website
-      : "https://www.google.com"
-      }`;
+    const website = `${
+      seeUser?.socialize?.website
+        ? seeUser?.socialize?.website
+        : "https://www.google.com"
+    }`;
     Linking.openURL(website);
   };
   const socialKeys = [
@@ -398,87 +402,167 @@ const Theme2 = ({ navigation }) => {
 
   return (
     <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        // paddingBottom: height / 10,
+      }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View style={styles.container}>
-        <View style={[styles.backgroundContainer, { width }]}>
-          <ImageBackground
-            source={require('../../../../assets/theme1bg.png')}
-            style={styles.backgroundImage}
-            imageStyle={styles.imageRadius}
+      <ImageBackground
+        source={require("../../../../assets/sidebackground1.png")}
+      >
+        <View style={styles.container}>
+          <View style={[styles.backgroundContainer]}>
+            <ImageBackground
+              source={require("../../../../assets/glassHeader.png")}
+              style={styles.backgroundheader}
+              imageStyle={styles.imageRadius}
+            ></ImageBackground>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              width: "100%",
+              paddingHorizontal: 30,
+              gap: 20,
+            }}
           >
-            <View style={styles.header}>
-            {seeUser && seeUser?.user?.userImage ? (
-              <View style={styles.avatarContainer}>
-                <Image
-                  source={{
-                    uri: `https://bc.exploreanddo.com/${seeUser.user.userImage}`,
-                  }}
-                  style={styles.avatar}
-                />
-                {seeUser?.company?.logo ? (
+            <View style={[styles.header]}>
+              {seeUser && seeUser?.user?.userImage ? (
+                <View style={styles.avatarContainer}>
                   <Image
                     source={{
-                      uri: `https://bc.exploreanddo.com/${seeUser.company.logo}`,
+                      uri: `https://bc.exploreanddo.com/${seeUser.user.userImage}`,
                     }}
-                    style={styles.logo}
-                    // resizeMode="contain"
+                    style={[
+                      styles.avatar,
+                      {
+                        width: avatarSize,
+                        height: avatarSize,
+                        borderRadius: avatarSize / 2,
+                      },
+                    ]}
                   />
-                ) : (
-                  <Image
-                    source={require("../../../../assets/social/speclogo.png")}
-                    style={styles.logo}
-                    // resizeMode="contain"
-                  />
-                )}
-              </View>
-            ) : (
-              <Image
-                source={require('../../../../assets/user.jpg')}
-                style={styles.avatar}
-              />
-            )}
-              <Text style={styles.name}>
+                  {seeUser?.company?.logo ? (
+                    <Image
+                      source={{
+                        uri: `https://bc.exploreanddo.com/${seeUser.company.logo}`,
+                      }}
+                      style={[
+                        styles.logo,
+                        {
+                          width: logSize,
+                          height: logSize,
+                          borderRadius: logSize / 2,
+                        },
+                      ]}
+                      // resizeMode="contain"
+                    />
+                  ) : (
+                    <Image
+                      source={require("../../../../assets/social/speclogo.png")}
+                      style={styles.logo}
+                      // resizeMode="contain"
+                    />
+                  )}
+                </View>
+              ) : (
+                <Image
+                  source={require("../../../../assets/user.jpg")}
+                  style={styles.avatar}
+                />
+              )}
+            </View>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "flex-start",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={[styles.name, { fontSize }]}>
                 {seeUser?.user?.firstname} {seeUser?.user?.lastname}
               </Text>
-              <Text style={styles.role}>
+              <Text style={[styles.role]}>
                 {seeUser?.user?.user_details?.title}
               </Text>
+              <Text style={styles.companyName}>
+                {seeUser?.company?.companyname}
+              </Text>
             </View>
-          </ImageBackground>
-        </View>
-
-
-
-        <View style={styles.infoContainer}>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoText}>Phone</Text>
-            <Text style={styles.infoText}>{seeUser?.user?.phone}</Text>
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoText}>Email</Text>
-            <Text style={styles.infoText}>{seeUser?.user?.email}</Text>
+
+          <View style={styles.allDetials}>
+            <View style={styles.allDetialsInnter}>
+              <View style={styles.allMediaIcon}>
+                <FontAwesome5 name={"phone-alt"} size={20} color={"#FFF"} />
+              </View>
+              <View style={styles.allMediaText}>
+                <Text style={styles.allDetialsInnerText}>
+                  {seeUser?.user?.phone}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.allDetialsInnter}>
+              <View style={styles.allMediaIcon}>
+                <Ionicons name={"mail"} size={20} color={"#FFF"} />
+              </View>
+              <View style={styles.allMediaText}>
+                <Text style={styles.allDetialsInnerText}>
+                  {seeUser?.user?.email}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.allDetialsInnter}>
+              <View style={styles.allMediaIcon}>
+                <MaterialCommunityIcons name={"web"} size={20} color={"#FFF"} />
+              </View>
+              <View style={styles.allMediaText}>
+                <Text style={styles.allDetialsInnerText}>
+                  {seeUser?.socialize?.website ||
+                    seeUser?.company?.website ||
+                    ""}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.allDetialsInnter}>
+              <View style={styles.allMediaIcon}>
+                <Ionicons name={"location-sharp"} size={20} color={"#FFF"} />
+              </View>
+              <View style={styles.allMediaText}>
+                <Text style={styles.allDetialsInnerText}>
+                  {seeUser?.user?.user_details?.address}
+                </Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoText}>Website</Text>
-            <Text style={styles.infoText}>{seeUser?.socialize?.website || seeUser?.company?.website || ''}</Text>
+
+          <View style={styles.socialMediaContainer}>
+            <View style={styles.socialMediaCircle}>
+              <FontAwesome name={"facebook-f"} size={20} color={"#FFF"} />
+            </View>
+            <View style={styles.socialMediaCircle}>
+              <FontAwesome name={"whatsapp"} size={20} color={"#FFF"} />
+            </View>
+            <View style={styles.socialMediaCircle}>
+              <FontAwesome name={"linkedin"} size={20} color={"#FFF"} />
+            </View>
+            <View style={styles.socialMediaCircle}>
+              <FontAwesome name={"instagram"} size={20} color={"#FFF"} />
+            </View>
+            {/* <NfcComponent navigation={navigation} /> */}
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoText}>Location</Text>
-            <Text style={styles.infoText}>
-              {seeUser?.user?.user_details?.address}
-            </Text>
+
+          <View>
+            <NfcComponent navigation={navigation} />
           </View>
-        </View>
 
-        <NfcComponent navigation={navigation} />
-
-
-
-        <ImageBackground
-          source={require('../../../../assets/socialbackground.png')}
+          {/* <ImageBackground
+          source={require("../../../../assets/socialbackground.png")}
           style={styles.backgroundImage}
           resizeMode="cover"
         >
@@ -494,8 +578,9 @@ const Theme2 = ({ navigation }) => {
             numColumns={4}
             contentContainerStyle={styles.flatListContainer}
           />
-        </ImageBackground>
-      </View>
+        </ImageBackground> */}
+        </View>
+      </ImageBackground>
     </ScrollView>
   );
 };
@@ -504,55 +589,70 @@ export default Theme2;
 const styles = StyleSheet.create({
   backgroundContainer: {
     flex: 1,
-  
   },
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover', 
-    
+    resizeMode: "cover",
   },
   imageRadius: {
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
+    objectFit: "cover",
+    // borderBottomLeftRadius: 50,
+    // borderBottomRightRadius: 50,
   },
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
-    paddingBottom: Dimensions.get('window').width * 1,
+    // backgroundColor: "#f8f8f8",
+    paddingBottom: Dimensions.get("window").height / 5,
   },
   header: {
-    alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 80,
-    paddingVertical: 50,
+    position: "relative",
+    // alignItems: "flex-start",
+    // marginBottom: 20,
+    // paddingop: 155,
+    // marginRight: 170,
+    // paddingVertical: 50,
   },
   gradientBackground: {
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     elevation: 2,
-    shadowColor: 'black',
+    shadowColor: "black",
     shadowOffset: { width: 0, height: -5 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
   backgroundImage: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   avatarContainer: {
-    position: 'relative',
-    
+    position: "relative",
+    marginTop: -100,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 20,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 5,
+    borderColor: "white",
+    alignSelf: "flex-start",
+    objectFit: "fill",
+  },
+  logo: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: "#908f8f",
+    objectFit: "fill",
   },
 
   itemContainer: {
@@ -560,7 +660,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 5,
     marginHorizontal: 10,
-
   },
   button1: {
     flexDirection: "row",
@@ -569,36 +668,29 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 10,
-    // borderWidth:0.3,
-    // borderColor:"gray"
-  },
-
-  logo: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "white"
   },
   name: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginVertical: 5,
+    paddingTop: 5,
+    fontWeight: "800",
+    color: "#282828",
   },
   role: {
-    fontSize: 16,
-    color: 'white',
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#454545",
     marginVertical: 5,
   },
+  companyName: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#454545",
+  },
   infoContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -606,60 +698,130 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
   },
   infoText: {
     fontSize: 16,
-    color: '#555',
-    fontWeight: 'bold',
+    color: "#555",
+    fontWeight: "bold",
   },
   saveAndSocialContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
     paddingHorizontal: 20,
   },
   flatListContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingBottom: 20,
+    height: "auto",
+    justifyContent: "center",
+    alignItems: "center",
   },
   socialButton: {
     padding: 10,
   },
   saveContactButton: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 15,
     borderRadius: 15,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
     borderWidth: 0.3,
-    borderColor: "gray"
+    borderColor: "gray",
   },
   saveContactText: {
-    color: '#5A8FE1',
+    color: "#5A8FE1",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginRight: 10,
   },
   saveContactText1: {
-    color: '#3B5BD3',
+    color: "#3B5BD3",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginRight: 10,
   },
-  backgroundImage: {
+  backgroundheader: {
+    width: "100%",
+    height: 220,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  allDetials: {
+    width: "auto",
+    display: "flex",
+    marginTop: 40,
+    marginHorizontal: 20,
+    justifyContent: "center",
+  },
+  allDetialsInnter: {
+    display: "flex",
+    flexDirection: "row",
+    marginVertical: 6,
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: 50,
+    gap: 15,
+    overflow: "hidden",
+  },
+  allDetialsInnerText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#282828",
+  },
+  barCodeBackground: {
+    backgroundColor: "#D9180A",
+    width: "auto",
+    marginTop: 40,
+    height: 200,
+  },
+  allMediaIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#FEBC5F",
+    // borderColor: "#FEBC5F",
+    // borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  allMediaText: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 30
+    width: "100%",
+    height: 50,
+    borderRadius: 25,
+    // backgroundColor: "#D9180A",
+    borderColor: "#FEBC5F",
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "left",
+    paddingHorizontal: 20,
+  },
+  socialMediaContainer: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    // marginVertical: 10,
+    paddingVertical: 50,
+    gap: 25,
+    paddingHorizontal: 20,
+  },
+  socialMediaCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#FEBC5F",
+    borderColor: "#FEBC5F",
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
-
