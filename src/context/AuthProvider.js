@@ -141,7 +141,7 @@ export function AuthProvider({ children }) {
       "6": "UserTheme6",
     };
     
-    const screenName = themeScreens[themeId] || "My Card";
+    const screenName = themeScreens[themeId] || "UserTheme1";
     navigation.navigate(screenName);
   }, []);
 

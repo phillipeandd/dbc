@@ -28,7 +28,7 @@ const RootScreen = ({ route }) => {
         navigation.navigate("UserTheme6");
         break;
       default:
-        navigation.navigate("My Card");
+        navigation.navigate("UserTheme1");
     }
   }, []);
 
