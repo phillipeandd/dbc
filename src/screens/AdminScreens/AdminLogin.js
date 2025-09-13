@@ -98,12 +98,12 @@ const AdminLogin = ({ navigation }) => {
                   styles.button,
                   { backgroundColor: "#702DFF", width: width * 0.8 },
                 ]}
-                onPress={handleAdminLogin}
+                onPress={() => handleAdminLogin(navigation)}
               >
                 {isLoginLoading ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
-                  <Text style={[styles.buttonText, { color: "white" }]}>LogIn</Text>
+                  <Text style={[styles.buttonText, { color: "white" }]}>Login</Text>
                 )}
               </TouchableOpacity>
               <View

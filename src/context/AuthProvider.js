@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import axios from "axios";
@@ -33,7 +32,6 @@ export function AuthProvider({ children }) {
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const navigation = useNavigation();
   
   // Login form state
   const [loginData, setLoginData] = useState({
@@ -150,7 +148,7 @@ export function AuthProvider({ children }) {
   /**
    * Handle user login with improved error handling
    */
-  const handleLogin2 = async () => {
+  const handleLogin2 = async (navigation) => {
     try {
       setIsLoginLoading(true);
       const response = await fetch("https://bc.exploreanddo.com/api/loginAuth", {
@@ -242,7 +240,7 @@ export function AuthProvider({ children }) {
   /**
    * Main login handler with improved error handling and validation
    */
-  const handleLogin = async () => {
+  const handleLogin = async (navigation) => {
     try {
       setIsLoginLoading(true);
   
@@ -337,7 +335,7 @@ export function AuthProvider({ children }) {
   /**
    * Handle admin login with validation and error handling
    */
-  const handleAdminLogin = async () => {
+  const handleAdminLogin = async (navigation) => {
     if (
       adminloginData.email.trim() === "" ||
       adminloginData.password.trim() === ""

@@ -185,7 +185,7 @@ const Login = ({ navigation }) => {
                 <MaterialIcons
                   name={showPassword ? "visibility" : "visibility-off"}
                   size={25}
-                  color="black"
+                  <Text style={[styles.buttonText, { color: "white" }]}>Login</Text>
                 />
               </TouchableOpacity>
             </View>
@@ -257,7 +257,7 @@ const Login = ({ navigation }) => {
                 styles.welcomeMessage,
                 { color: "white", fontWeight: 800 },
               ]}
-            >
+              onPress={() => handleLogin(navigation)}
               Login Account
             </Text>
             <Text style={[styles.welcomeMessage, { fontSize: 16 }]}>
@@ -277,7 +277,7 @@ const Login = ({ navigation }) => {
               onPress={() => navigation.navigate("Reset Password")}
             >
               <Text style={{ color: "#702DFF" }}>
-                Forgot Password
+                <Text style={[styles.buttonText, { color: "white" }]}>Login</Text>
               </Text>
             </TouchableOpacity>
           </View>
