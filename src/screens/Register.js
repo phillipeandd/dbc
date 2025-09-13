@@ -228,3 +228,5 @@ const styles = StyleSheet.create({
     marginTop: 40,
     width: 300,
   },
+}
+)
