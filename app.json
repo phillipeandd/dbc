@@ -36,6 +36,9 @@
       "eas": {
         "projectId": "f7210dfb-ff28-4447-a5af-b5140433f910"
       }
+    },
+    "updates": {
+      "enabled": false
     }
   }
 }
