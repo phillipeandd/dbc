@@ -21,13 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.NFC"
+      ],
+      "package": "com.phillip_port.digitalbuisnesscard"
     },
     "plugins": [
       "expo-build-properties",
       "expo-font",
-      "react-native-nfc-manager",
-      "react-native-share"
+      "react-native-nfc-manager"
     ]
   }
 }
