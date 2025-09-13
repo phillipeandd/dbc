@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -273,9 +273,14 @@ const NfcComponent = ({ navigation }) => {
   // Initialize NFC on component mount
   useEffect(() => {
     initializeNFC();
+    return () => {
       cancelNfcSession();
     };
   }, []);
+
+  return (
+    <View style={styles.rowReader}>
+      <View
         style={styles.gradientButtonContainer}
       >
         <TouchableOpacity style={styles.button} onPress={handleWrite}>
@@ -331,3 +336,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
   },
+});
