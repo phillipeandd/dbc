@@ -293,6 +293,7 @@ const Theme1 = ({ navigation }) => {
                 borderColor: "#F78380",
               }}
               //resizeMode="contain"
+            />
           ) : (
             <Image
               source={require("../../../../assets/user.jpg")}
@@ -304,6 +305,7 @@ const Theme1 = ({ navigation }) => {
                 borderColor: "#F78380",
               }}
               //resizeMode="contain"
+            />
           )}
           <View style={{ marginTop: "10%" }}>
             <Text
@@ -339,6 +341,7 @@ const Theme1 = ({ navigation }) => {
                 : seeUser?.user?.phone
             }
             //onPress={handlePhonePress}
+          />
           <View style={styles.plusLine} />
           <GridItem
             icon="mail"
@@ -349,6 +352,7 @@ const Theme1 = ({ navigation }) => {
                 : seeUser?.user?.email
             }
             //onPress={handleEmailPress}
+          />
         </View>
         <View style={styles.horizontalLine} />
         <View style={styles.row}>
@@ -359,6 +363,7 @@ const Theme1 = ({ navigation }) => {
               seeUser?.company?.website ? seeUser?.company?.website : ""
             }
             //onPress={handleWebsitePress}
+          />
 
           <View style={styles.plusLine} />
           <GridItem
@@ -506,3 +511,4 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#F78380",
   },
+});
