@@ -23,13 +23,6 @@
         "backgroundColor": "#ffffff"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png",
-      "output": "static"
-    },
-    "plugins": [
       "expo-build-properties"
     ],
-    "scheme": "digitalbuisnesscard"
-  }
-}
+    ]
