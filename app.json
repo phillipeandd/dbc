@@ -2,11 +2,26 @@
   "expo": {
     "name": "digitalbuisnesscard",
     "slug": "digitalbuisnesscard",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "plugins": ["react-native-nfc-manager"],
+    "plugins": [
+      "react-native-nfc-manager",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "13.4"
+          }
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -16,7 +31,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.phillip_port.digitalbuisnesscard"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,12 +41,15 @@
       },
       "permissions": [
         "NOTIFICATIONS",
-        "CAMERA"
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
       ],
       "package": "com.phillip_port.digitalbuisnesscard"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
     "extra": {
       "eas": {
@@ -39,6 +58,7 @@
     },
     "updates": {
       "enabled": false
-    }
+    },
+    "scheme": "digitalbuisnesscard"
   }
 }

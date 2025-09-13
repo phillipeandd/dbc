@@ -19,6 +19,8 @@ import {
   createDrawerNavigator,
 } from "@react-navigation/drawer";
 import { AuthProvider, useAuth } from "./src/context/AuthProvider";
+import { ThemeProvider } from "./context/ThemeProvider";
+import { SafeAreaWrapper } from "./components/common";
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -92,6 +94,7 @@ import PrivacyPolicy from "./src/drawers/User/Supports/PrivacyPolicy";
 import Feedback from "./src/drawers/User/Supports/Feedback";
 import Theme3_0 from "./src/drawers/User/Themes/Theme3_0";
 import UserTheme3_0 from "./src/drawers/User/UserThemed/UserTheme3_0";
+
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 const windowHeight = Dimensions.get("window").height;
@@ -1094,339 +1097,334 @@ const App = () => {
   const toastRef = useRef();
 
   return (
-    <NavigationContainer>
-      <AuthProvider>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Root"
-            component={Root}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Signup"
-            component={Signup}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Reset Password"
-            component={ForgotPassword}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Admin Login"
-            component={AdminLogin}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Display"
-            component={Display}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="Edit Info"
-            component={EditInfo}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="Add Fields"
-            component={AddFields}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="Theme1"
-            component={Theme1}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Theme2"
-            component={Theme2}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Theme3"
-            component={Theme3}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-           <Stack.Screen
-            name="Theme3_0"
-            component={Theme3_0}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Theme4"
-            component={Theme4}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Theme5"
-            component={Theme5}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Theme6"
-            component={Theme6}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Select Theme"
-            component={SelectTheme}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Enter Card Details"
-            component={EnterCardDetails}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Layout"
-            component={Layout}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="Footer"
-            component={Footer}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Analytics"
-            component={Analytics}
-            // options={{
-            //   headerShown: false,
-            //   headerLeft: null,
-            // }}
-          />
-          <Stack.Screen
-            name="Scanner"
-            component={Scanner}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Contact Support"
-            component={ContactSupport}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Manage Support"
-            component={ManageSupport}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="App Version"
-            component={AppVersion}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Help Center"
-            component={HelpCenter}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Privacy Policy"
-            component={PrivacyPolicy}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Feedback"
-            component={Feedback}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Check Updates"
-            component={CheckUpdates}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Lead Details"
-            component={ContactDetails}
-            // options={{
-            //   headerShown: false,
-            //   headerLeft: null,
-            // }}
-          />
-          <Stack.Screen
-            name="Admin Display"
-            component={AdminDisplay}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="Admin Edit Info"
-            component={AdminEditInfo}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="Admin Add Fields"
-            component={AdminAddFields}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-              headerTitle: "",
-            }}
-          />
-          <Stack.Screen
-            name="ATheme1"
-            component={ATheme1}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="ATheme2"
-            component={ATheme2}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="ATheme3"
-            component={ATheme3}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="ATheme4"
-            component={ATheme4}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="ATheme5"
-            component={ATheme5}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="ATheme6"
-            component={ATheme6}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-          <Stack.Screen
-            name="Admin Layout"
-            component={AdminLayout}
-            options={{
-              headerShown: true,
-              headerLeft: null,
-              headerTitle: "",
-            }}
-          />
-
-          <Stack.Screen
-            name="Add User"
-            component={AddUser}
-            options={{
-              headerShown: false,
-              headerLeft: null,
-            }}
-          />
-        </Stack.Navigator>
-      </AuthProvider>
-      <Toast ref={toastRef} />
-    </NavigationContainer>
+    <ThemeProvider>
+      <SafeAreaWrapper>
+        <NavigationContainer>
+          <AuthProvider>
+            <Stack.Navigator>
+              <Stack.Screen
+                name="Root"
+                component={Root}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Signup"
+                component={Signup}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Reset Password"
+                component={ForgotPassword}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Admin Login"
+                component={AdminLogin}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Display"
+                component={Display}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="Edit Info"
+                component={EditInfo}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="Add Fields"
+                component={AddFields}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="Theme1"
+                component={Theme1}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Theme2"
+                component={Theme2}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Theme3"
+                component={Theme3}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+               <Stack.Screen
+                name="Theme3_0"
+                component={Theme3_0}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Theme4"
+                component={Theme4}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Theme5"
+                component={Theme5}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Theme6"
+                component={Theme6}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Select Theme"
+                component={SelectTheme}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Enter Card Details"
+                component={EnterCardDetails}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Layout"
+                component={Layout}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="Footer"
+                component={Footer}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Analytics"
+                component={Analytics}
+              />
+              <Stack.Screen
+                name="Scanner"
+                component={Scanner}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Contact Support"
+                component={ContactSupport}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Manage Support"
+                component={ManageSupport}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="App Version"
+                component={AppVersion}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Help Center"
+                component={HelpCenter}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Privacy Policy"
+                component={PrivacyPolicy}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Feedback"
+                component={Feedback}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Check Updates"
+                component={CheckUpdates}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Lead Details"
+                component={ContactDetails}
+              />
+              <Stack.Screen
+                name="Admin Display"
+                component={AdminDisplay}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="Admin Edit Info"
+                component={AdminEditInfo}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="Admin Add Fields"
+                component={AdminAddFields}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="ATheme1"
+                component={ATheme1}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="ATheme2"
+                component={ATheme2}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="ATheme3"
+                component={ATheme3}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="ATheme4"
+                component={ATheme4}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="ATheme5"
+                component={ATheme5}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="ATheme6"
+                component={ATheme6}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+              <Stack.Screen
+                name="Admin Layout"
+                component={AdminLayout}
+                options={{
+                  headerShown: true,
+                  headerLeft: null,
+                  headerTitle: "",
+                }}
+              />
+              <Stack.Screen
+                name="Add User"
+                component={AddUser}
+                options={{
+                  headerShown: false,
+                  headerLeft: null,
+                }}
+              />
+            </Stack.Navigator>
+          </AuthProvider>
+          <Toast ref={toastRef} />
+        </NavigationContainer>
+      </SafeAreaWrapper>
+    </ThemeProvider>
   );
 };
 
