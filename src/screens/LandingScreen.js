@@ -8,8 +8,20 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
+/**
+ * Landing screen component - first screen users see
+ * Provides options for different user types to login or register
+ * @param {Object} navigation - Navigation object for screen transitions
+ */
 const LandingScreen = ({ navigation }) => {
   const { width, height } = Dimensions.get("window");
+
+  /**
+   * Navigation handlers for different user types
+   */
+  const navigateToSelfEmployedLogin = () => navigation.navigate("Login");
+  const navigateToCompanyLogin = () => navigation.navigate("Admin Login");
+  const navigateToSignup = () => navigation.navigate("Signup");
 
   return (
     <View style={styles.container}>
@@ -32,32 +44,31 @@ const LandingScreen = ({ navigation }) => {
             styles.button,
             { backgroundColor: "white", width: width * 0.9 },
           ]}
-          onPress={() => navigation.navigate("Login")}
-          //onPress={() => navigation.navigate("My Card")}
+          onPress={navigateToSelfEmployedLogin}
         >
           <Text style={[styles.buttonText, { color: "#161616" }]}>
             Login for Self Employed
           </Text>
         </TouchableOpacity>
+        
         <TouchableOpacity
           style={[
             styles.button,
             { backgroundColor: "white", width: width * 0.9 },
           ]}
-          onPress={() => navigation.navigate("Admin Login")}
-          //onPress={()=>navigation.navigate("Theme6")}
+          onPress={navigateToCompanyLogin}
         >
           <Text style={[styles.buttonText, { color: "#702DFF" }]}>
             Login for Company
           </Text>
         </TouchableOpacity>
+        
         <TouchableOpacity
           style={[
             styles.button,
             { backgroundColor: "#161616", width: width * 0.9 },
           ]}
-          onPress={() => navigation.navigate("Signup")}
-          //onPress={() => navigation.navigate("Admin Home")}
+          onPress={navigateToSignup}
         >
           <Text style={[styles.buttonText, { color: "white" }]}>
             Create an account
@@ -67,6 +78,8 @@ const LandingScreen = ({ navigation }) => {
     </View>
   );
 };
+
+export default LandingScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -108,6 +121,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-});
-
-export default LandingScreen;

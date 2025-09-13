@@ -10,23 +10,38 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 import { Share, Vibration } from "react-native";
+
+/**
+ * Authentication context for managing user authentication state
+ * and related functionality across the app
+ */
 const AuthContext = createContext();
 
+/**
+ * Hook to access authentication context
+ * @returns {Object} Authentication context value
+ */
 export function useAuth() {
   return useContext(AuthContext);
 }
 
+/**
+ * Authentication provider component that manages user state,
+ * login/logout functionality, and user preferences
+ */
 export function AuthProvider({ children }) {
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
-  //console.log("loggedInUser", loggedInUser);
   const navigation = useNavigation();
+  
+  // Login form state
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
+  // Business information state
   const [business_name, setBuisnessName] = useState("");
   const [website, setWebsite] = useState("");
   const [email, setEmail] = useState("");
@@ -35,12 +50,16 @@ export function AuthProvider({ children }) {
   const [title, setTitle] = useState("");
   const [logo, setLogo] = useState("");
   const [userImage, setUserImage] = useState("");
+  
+  // Business form handlers
   const handleBuisnessChange = (text) => {
     setBuisnessName(text);
   };
+  
   const handleWebsiteChange = (text) => {
     setWebsite(text);
   };
+  
   const handleBuisnessEmailChange = (text) => {
     setEmail(text);
   };
@@ -48,13 +67,16 @@ export function AuthProvider({ children }) {
   const handleBuisnessPhoneChange = (text) => {
     setPhone(text);
   };
+  
   const handleCompanyChange = (text) => {
     setCompanyName(text);
   };
+  
   const handleTitleChange = (text) => {
     setTitle(text);
   };
 
+  // Admin authentication state
   const [adminauthenticated, setadminAuthenticated] = useState(false);
   const [adminloggedInUser, setadminLoggedInUser] = useState(null);
   const [adminloginData, setadminLoginData] = useState({
@@ -62,9 +84,11 @@ export function AuthProvider({ children }) {
     password: "",
   });
 
+  // Error state
   const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
   const [isadminInvalidCredentials, setIsadminInvalidCredentials] =
     useState(false);
+  // Login form handlers
 
   const handleEmailChange = (text) => {
     setLoginData({
@@ -80,6 +104,7 @@ export function AuthProvider({ children }) {
     });
   };
 
+  // Admin login form handlers
   const handleadminEmailChange = (text) => {
     setadminLoginData({
       ...adminloginData,
@@ -94,6 +119,7 @@ export function AuthProvider({ children }) {
     });
   };
 
+  // User session state
   const [token, setToken] = useState(null);
   const [roleOf, setRoleOf] = useState(null);
   const [userId, setUsersId] = useState(null);
@@ -102,6 +128,28 @@ export function AuthProvider({ children }) {
   const [showEmail, setShowEmail] = useState(null);
   const [showImage, setShowImage] = useState(null);
 
+  /**
+   * Navigate user to appropriate theme screen based on theme ID
+   * @param {string} themeId - The theme ID to navigate to
+   * @param {Object} navigation - Navigation object
+   */
+  const navigateToTheme = useCallback((themeId, navigation) => {
+    const themeScreens = {
+      "1": "UserTheme1",
+      "2": "UserTheme2", 
+      "3": "UserTheme3",
+      "4": "UserTheme4",
+      "5": "UserTheme5",
+      "6": "UserTheme6",
+    };
+    
+    const screenName = themeScreens[themeId] || "My Card";
+    navigation.navigate(screenName);
+  }, []);
+
+  /**
+   * Handle user login with improved error handling
+   */
   const handleLogin2 = async () => {
     try {
       setIsLoginLoading(true);
@@ -112,11 +160,9 @@ export function AuthProvider({ children }) {
         },
         body: JSON.stringify(loginData),
       });
-      //console.log("response",response)
 
       if (response.status === 200) {
         const data = await response.json();
-        //console.log("api data", data);
         setLoggedInUser(data.data);
         setRoleOf(data.data.role_id);
         setUsersId(data.data.id);
@@ -124,49 +170,17 @@ export function AuthProvider({ children }) {
         setFirstName(data.data.firstname);
         setShowEmail(data.data.email);
         setShowImage(data.data.userImage);
+        
         if (data.token) {
           setToken(data.token);
           setAuthenticated(true);
-          // const userData = await AsyncStorage.getItem(
-          //   `user_${loginData.email}`
-          // );
-          // if (userData === null && data.data.role_id === "4") {
-          //   AsyncStorage.setItem(
-          //     `user_${loginData.email}`,
-          //     JSON.stringify({ loggedIn: true })
-          //   );
-          //   navigation.navigate("First Thing");
-          // } 
+          
           if (data.isFirstLogin) {
             navigation.navigate("First Thing");
+          } else {
+            navigateToTheme(data.data.theme_id, navigation);
           }
-          else {
-            const themeId = data.data.theme_id;
-            //console.log("themeid", themeId)
-            //const themeId = "6";
-            switch (themeId) {
-              case "1":
-                navigation.navigate("UserTheme1");
-                break;
-              case "2":
-                navigation.navigate("UserTheme2");
-                break;
-              case "3":
-                navigation.navigate("UserTheme3");
-                break;
-              case "4":
-                navigation.navigate("UserTheme4");
-                break;
-              case "5":
-                navigation.navigate("UserTheme5");
-                break;
-              case "6":
-                navigation.navigate("UserTheme6");
-                break;
-              default:
-                navigation.navigate("My Card");
-            }
-          }
+          
           Toast.show({
             type: "success",
             text1: `Welcome Back ${data.data.firstname}`,
@@ -174,6 +188,7 @@ export function AuthProvider({ children }) {
             position: "top",
             visibilityTime: 4000,
           });
+          
           setLoginData({
             ...loginData,
             email: "",
@@ -212,11 +227,21 @@ export function AuthProvider({ children }) {
       }
     } catch (error) {
       console.error("Login error:", error);
+      Toast.show({
+        type: "error",
+        text1: "Login Failed",
+        text2: "Network error occurred",
+        position: "top",
+        visibilityTime: 4000,
+      });
     } finally {
       setIsLoginLoading(false);
     }
   };
 
+  /**
+   * Main login handler with improved error handling and validation
+   */
   const handleLogin = async () => {
     try {
       setIsLoginLoading(true);
@@ -229,11 +254,8 @@ export function AuthProvider({ children }) {
         body: JSON.stringify(loginData),
       });
   
-      
-  
       if (response.status === 200 ) {
         const data = await response.json();
-        //console.log("API Data:", data);
         setLoggedInUser(data.data);
         setRoleOf(data.data.role_id);
         setUsersId(data.data.id);
@@ -241,6 +263,7 @@ export function AuthProvider({ children }) {
         setFirstName(data.data.firstname);
         setShowEmail(data.data.email);
         setShowImage(data.data.userImage);
+        
         if (data.token) {
           setToken(data.token);
           setAuthenticated(true);
@@ -248,29 +271,7 @@ export function AuthProvider({ children }) {
           if (data.isFirstLogin) {
             navigation.navigate("First Thing");
           } else {
-            const themeId = data.data.theme_id;
-            switch (themeId) {
-              case "1":
-                navigation.navigate("UserTheme1");
-                break;
-              case "2":
-                navigation.navigate("UserTheme2");
-                break;
-              case "3":
-                navigation.navigate("UserTheme3");
-                break;
-              case "4":
-                navigation.navigate("UserTheme4");
-                break;
-              case "5":
-                navigation.navigate("UserTheme5");
-                break;
-              case "6":
-                navigation.navigate("UserTheme6");
-                break;
-              default:
-                navigation.navigate("My Card");
-            }
+            navigateToTheme(data.data.theme_id, navigation);
           }
   
           Toast.show({
@@ -283,7 +284,6 @@ export function AuthProvider({ children }) {
   
           setLoginData({ ...loginData, email: "", password: "" });
         } else {
-          //throw new Error("Token missing in response.");
           Toast.show({
             type: "error",
             text1: `Login Failed`,
@@ -298,7 +298,6 @@ export function AuthProvider({ children }) {
             password: "",
           });
         }
-        
       } else if (response.status === 401) {
         Toast.show({
           type: "error",
@@ -334,10 +333,10 @@ export function AuthProvider({ children }) {
       setIsLoginLoading(false);
     }
   };
-  
 
-  
-
+  /**
+   * Handle admin login with validation and error handling
+   */
   const handleAdminLogin = async () => {
     if (
       adminloginData.email.trim() === "" ||
@@ -372,6 +371,7 @@ export function AuthProvider({ children }) {
         setFirstName(data.data.firstname);
         setShowEmail(data.data.email);
         setShowImage(data.data.userImage);
+        
         if (data.token) {
           setToken(data.token);
           setadminAuthenticated(true);
@@ -440,8 +440,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-
-
+  // Notification state
   const [notifications, setNotifications] = useState([]);
 
   const addNotification = (notification) => {
@@ -455,6 +454,9 @@ export function AuthProvider({ children }) {
     setNotifications([]);
   };
 
+  /**
+   * Handle user logout and clear session data
+   */
   const userLogout = async () => {
     try {
       setToken(null);
@@ -468,6 +470,10 @@ export function AuthProvider({ children }) {
       console.error("Logout error:", error);
     }
   };
+  
+  /**
+   * Handle company/admin logout and clear session data
+   */
   const companyLogout = async () => {
     try {
       setToken(null);
@@ -482,6 +488,7 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Vibration settings
   const [vibrationEnabled, setVibrationEnabled] = useState(false);
 
   const handleVibrationToggle = (value) => {
@@ -494,6 +501,9 @@ export function AuthProvider({ children }) {
     }
   };
 
+  /**
+   * Handle profile sharing via native share API
+   */
   const handleShareProfile = async () => {
     handleClickVibration();
     try {
@@ -507,10 +517,14 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // User data state
   const [seeUser, setSeeUser] = useState("");
+  
+  /**
+   * Fetch user company details with automatic refresh
+   */
   const fetchData = useCallback(() => {
     const apiUrl = `https://bc.exploreanddo.com/api/get-company-details/${userId}`;
-    //const apiUrl = `https://bc.exploreanddo.com/api/get-company-details/5`;
     axios
       .get(apiUrl)
       .then((response) => {
@@ -529,12 +543,14 @@ export function AuthProvider({ children }) {
     return () => clearInterval(intervalId);
   }, [fetchData]);
 
-
+  // Social media data state
   const [social, setSocial] = useState("");
-  //console.log("social",social)
+  
+  /**
+   * Fetch social media links for the user
+   */
   const fetchSocialData = useCallback(() => {
     const apiUrl = `https://bc.exploreanddo.com/api/get-socialmedia-links/${userId}`;
-    //const apiUrl = `https://bc.exploreanddo.com/api/get-socialmedia-links/5`;
     axios
       .get(apiUrl)
       .then((response) => {
@@ -549,9 +565,7 @@ export function AuthProvider({ children }) {
     fetchSocialData();
   }, [fetchSocialData]);
 
-
-
-
+  // Context value object
   const value = {
     vibrationEnabled,
     setVibrationEnabled,
@@ -617,7 +631,8 @@ export function AuthProvider({ children }) {
     userId,
     themeIds,
     handleShareProfile,
-    seeUser, setSeeUser,
+    seeUser,
+    setSeeUser,
     social,
     setSocial,
   };

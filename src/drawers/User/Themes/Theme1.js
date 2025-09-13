@@ -8,20 +8,31 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
 import React, { useCallback, useEffect, useState } from "react";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../../../context/AuthProvider";
 import NfcComponent from "../../../components/NfcComponent";
+
+/**
+ * Theme 1 component - Classic business card layout
+ * @param {Object} navigation - Navigation object for screen transitions
+ */
 const Theme1 = ({ navigation }) => {
-  //const [seeUser, setSeeUser] = useState("");
-  //console.log("buisnessdetails", seeUser);
-  const { userId, handleShareProfile, handleClickVibration,seeUser, setSeeUser } = useAuth();
+  const { 
+    userId, 
+    handleShareProfile, 
+    handleClickVibration, 
+    seeUser, 
+    setSeeUser 
+  } = useAuth();
+  
+  /**
+   * Fetch user company details
+   */
   const fetchData = useCallback(() => {
     const apiUrl = `https://bc.exploreanddo.com/api/get-company-details/${userId}`;
-    //const apiUrl = `https://bc.exploreanddo.com/api/get-company-details/5`;
     axios
       .get(apiUrl)
       .then((response) => {
@@ -34,17 +45,15 @@ const Theme1 = ({ navigation }) => {
 
   useEffect(() => {
     fetchData();
-    // const intervalId = setInterval(() => {
-    //   fetchData();
-    // }, 3000);
-    // return () => clearInterval(intervalId);
   }, [fetchData]);
 
   const [social, setSocial] = useState("");
-  //console.log("social", social);
+  
+  /**
+   * Fetch social media links for the user
+   */
   const fetchSocialData = useCallback(() => {
     const apiUrl = `https://bc.exploreanddo.com/api/get-socialmedia-links/${userId}`;
-    //const apiUrl = `https://bc.exploreanddo.com/api/get-socialmedia-links/5`;
     axios
       .get(apiUrl)
       .then((response) => {
@@ -57,28 +66,27 @@ const Theme1 = ({ navigation }) => {
 
   useEffect(() => {
     fetchSocialData();
-    // const intervalId = setInterval(() => {
-    //   fetchSocialData();
-    // }, 5000);
-    // return () => clearInterval(intervalId);
   }, [fetchSocialData]);
 
-  const text = `${
-    seeUser?.user?.user_details?.headline
-      ? seeUser?.user?.user_details?.headline
-      : ""
-  }`;
-
+  /**
+   * Handle phone number press - opens phone dialer
+   */
   const handlePhonePress = () => {
     const phoneNumber = `${seeUser?.phone ? seeUser?.phone : ""}`;
     Linking.openURL(`tel:${phoneNumber}`);
   };
 
+  /**
+   * Handle email press - opens email client
+   */
   const handleEmailPress = () => {
     const email = `${seeUser?.email ? seeUser?.email : ""}`;
     Linking.openURL(`mailto:${email}`);
   };
 
+  /**
+   * Handle website press - opens browser
+   */
   const handleWebsitePress = () => {
     const website = `${
       seeUser?.company?.website
@@ -88,6 +96,9 @@ const Theme1 = ({ navigation }) => {
     Linking.openURL(website);
   };
 
+  /**
+   * Handle WhatsApp press with error handling
+   */
   const handleWhatsAppPress = () => {
     handleClickVibration();
     const phoneNumber = social?.whatsapp;
@@ -101,6 +112,9 @@ const Theme1 = ({ navigation }) => {
     });
   };
 
+  /**
+   * Handle Instagram press with error handling
+   */
   const handleInstagramPress = () => {
     handleClickVibration();
     const userName = social?.instagram;
@@ -113,6 +127,10 @@ const Theme1 = ({ navigation }) => {
       });
     });
   };
+  
+  /**
+   * Handle Twitter press with error handling
+   */
   const handleTwitterPress = () => {
     handleClickVibration();
     const userName = social?.twitter;
@@ -126,6 +144,9 @@ const Theme1 = ({ navigation }) => {
     });
   };
 
+  /**
+   * Handle Facebook press with fallback to browser
+   */
   const handleFacebookPress = () => {
     handleClickVibration();
     const facebookId = social?.facebook;
@@ -148,6 +169,10 @@ const Theme1 = ({ navigation }) => {
     }
   };
 
+  /**
+   * Open Facebook profile in browser as fallback
+   * @param {string} email - Email to search for on Facebook
+   */
   const openFacebookProfileInBrowser = (email) => {
     const webUrl = `https://www.facebook.com/search/top/?q=${encodeURIComponent(
       email
@@ -162,6 +187,12 @@ const Theme1 = ({ navigation }) => {
     });
   };
 
+  /**
+   * Grid item component for contact information
+   * @param {string} icon - Material icon name
+   * @param {string} label - Display label
+   * @param {string} description - Contact information
+   */
   const GridItem = ({ icon, label, description }) => {
     return (
       <TouchableOpacity style={styles.gridItem} >
@@ -171,6 +202,7 @@ const Theme1 = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+  
   return (
     <ScrollView>
       <View
@@ -200,7 +232,6 @@ const Theme1 = ({ navigation }) => {
                 uri: `https://bc.exploreanddo.com/${seeUser.company.logo}`,
               }}
               style={{ width: 80, height: 80, borderRadius: 20 }}
-              //resizeMode="contain"
             />
           ) : (
             <Image
@@ -233,6 +264,7 @@ const Theme1 = ({ navigation }) => {
             </Text>
           </View>
         </View>
+        
         <View
           style={{
             borderBottomWidth: 1,
@@ -240,6 +272,7 @@ const Theme1 = ({ navigation }) => {
             marginVertical: 10,
           }}
         />
+        
         <View
           style={{
             flexDirection: "row",
@@ -260,7 +293,6 @@ const Theme1 = ({ navigation }) => {
                 borderColor: "#F78380",
               }}
               //resizeMode="contain"
-            />
           ) : (
             <Image
               source={require("../../../../assets/user.jpg")}
@@ -272,7 +304,6 @@ const Theme1 = ({ navigation }) => {
                 borderColor: "#F78380",
               }}
               //resizeMode="contain"
-            />
           )}
           <View style={{ marginTop: "10%" }}>
             <Text
@@ -308,7 +339,6 @@ const Theme1 = ({ navigation }) => {
                 : seeUser?.user?.phone
             }
             //onPress={handlePhonePress}
-          />
           <View style={styles.plusLine} />
           <GridItem
             icon="mail"
@@ -319,7 +349,6 @@ const Theme1 = ({ navigation }) => {
                 : seeUser?.user?.email
             }
             //onPress={handleEmailPress}
-          />
         </View>
         <View style={styles.horizontalLine} />
         <View style={styles.row}>
@@ -330,7 +359,6 @@ const Theme1 = ({ navigation }) => {
               seeUser?.company?.website ? seeUser?.company?.website : ""
             }
             //onPress={handleWebsitePress}
-          />
 
           <View style={styles.plusLine} />
           <GridItem
@@ -341,9 +369,9 @@ const Theme1 = ({ navigation }) => {
                 ? seeUser?.company?.address
                 : seeUser?.user?.user_details?.address
             }
-            //onPress={handleWebsitePress}
           />
         </View>
+        
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           <TouchableOpacity
             style={[
@@ -356,7 +384,6 @@ const Theme1 = ({ navigation }) => {
             <Text
               style={{
                 color: "white",
-                // fontSize: 16,
                 fontWeight: "bold",
                 textAlign: "center",
               }}
@@ -365,13 +392,13 @@ const Theme1 = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
+        
         <View
           style={[
             styles.rowSocial,
             {
               backgroundColor: "#FFFFFF",
               borderRadius: 15,
-              // paddingHorizontal: Dimensions.get("window").width * 0.05,
               paddingVertical: Dimensions.get("window").height * 0.01,
               gap: 10,
             },
@@ -398,6 +425,7 @@ const Theme1 = ({ navigation }) => {
               />
             </View>
           </TouchableOpacity>
+          
           <TouchableOpacity
             style={styles.buttonContainer}
             onPress={handleTwitterPress}
@@ -408,6 +436,7 @@ const Theme1 = ({ navigation }) => {
               />
             </View>
           </TouchableOpacity>
+          
           <TouchableOpacity
             style={styles.buttonContainer}
             onPress={handleFacebookPress}
@@ -418,37 +447,8 @@ const Theme1 = ({ navigation }) => {
               />
             </View>
           </TouchableOpacity>
-          {/* <TouchableOpacity style={styles.buttonContainer}>
-            <View style={styles.buttonContent}>
-              <Image
-                source={require("../../../../assets/social/icons8-pinterest-48.png")}
-              />
-            </View>
-          </TouchableOpacity> */}
-          {/* <TouchableOpacity style={styles.buttonContainer}>
-            <View style={styles.buttonContent}>
-              <Image
-                source={require("../../../../assets/social/icons8-tiktok-48.png")}
-              />
-            </View>
-          </TouchableOpacity> */}
         </View>
-        {/* <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              {
-                backgroundColor: "#F78380",
-                width: Dimensions.get("window").width * 0.4,
-              },
-            ]}
-            onPress={handleShareProfile}
-          >
-            <Text style={{ color: "white", fontSize: 14, fontWeight: "bold" }}>
-              <FontAwesome name="send-o" size={15} color={"white"} /> Share
-            </Text>
-          </TouchableOpacity>
-        </View> */}
+        
         <NfcComponent navigation={navigation} />
       </View>
     </ScrollView>
@@ -458,19 +458,11 @@ const Theme1 = ({ navigation }) => {
 export default Theme1;
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flexGrow: 1,
-  },
-  gradientBackground: {
-    flex: 1,
-  },
-
   imageText: {
     fontWeight: "bold",
     color: "white",
     fontSize: 24,
   },
-
   buttonContainer: {
     alignItems: "center",
   },
@@ -478,17 +470,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 8,
-  },
-  button: {
-    paddingHorizontal: Dimensions.get("window").width * 0.05,
-    padding: 15,
-    borderRadius: 15,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  buttonText: {
-    marginTop: 5,
   },
   row: {
     flexDirection: "row",
@@ -525,4 +506,3 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#F78380",
   },
-});

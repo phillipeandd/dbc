@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  PermissionsAndroid,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,12 +13,15 @@ import {
   MaterialCommunityIcons,
   Ionicons,
 } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../context/AuthProvider";
 
 // Initialize NFC Manager
 NfcManager.start();
 
+/**
+ * NFC Component for handling NFC operations and profile sharing
+ * @param {Object} navigation - Navigation object for screen transitions
+ */
 const NfcComponent = ({ navigation }) => {
   const { userId, handleClickVibration } = useAuth();
   const { width } = Dimensions.get("window");
@@ -28,9 +30,9 @@ const NfcComponent = ({ navigation }) => {
     `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`
   );
 
-  //console.log("userData", userData)
-
-  // Function to initialize NFC Manager
+  /**
+   * Initialize NFC Manager
+   */
   const initializeNFC = async () => {
     try {
       await NfcManager.start();
@@ -40,17 +42,22 @@ const NfcComponent = ({ navigation }) => {
     }
   };
 
-  // Clean up NFC session
+  /**
+   * Clean up active NFC session
+   */
   const cancelNfcSession = async () => {
     try {
-      await NfcManager.cancelTechnologyRequest(); // Cancel any active NFC session
+      await NfcManager.cancelTechnologyRequest();
       console.log("NFC session successfully canceled.");
     } catch (error) {
       console.warn("Error while canceling NFC session:", error);
     }
   };
 
-  // Check if NFC is supported and enabled
+  /**
+   * Check if NFC is supported and enabled on the device
+   * @returns {boolean} True if NFC is available, false otherwise
+   */
   const checkNfcState = async () => {
     try {
       const isSupported = await NfcManager.isSupported();
@@ -78,22 +85,21 @@ const NfcComponent = ({ navigation }) => {
     }
   };
 
-  // Write a link to the NFC tag
+  /**
+   * Write a link to the NFC tag (legacy method)
+   * @param {string} link - The URL to write to the NFC tag
+   */
   const writeNFC = async (link) => {
     try {
-      // Ensure no overlapping NFC session
       await cancelNfcSession();
-
-      // Start a new NFC session
       await NfcManager.requestTechnology(NfcTech.Ndef);
       console.log("NFC Tag detected, ready for operations.");
 
-      // Check if the tag is compatible with NDEF format
       const tag = await NfcManager.getTag();
       if (!tag.canMakeReadOnly()) {
         throw new Error("NFC tag is not writable.");
       }
-      // Encode the link to NDEF format
+      
       const bytes = Ndef.encodeMessage([
         Ndef.uriRecord(
           `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`
@@ -104,18 +110,20 @@ const NfcComponent = ({ navigation }) => {
         return;
       }
 
-      // Write the encoded message to the NFC tag
       await NfcManager.writeNdefMessage(bytes);
       Alert.alert("Success", "Link successfully written to the NFC tag!");
     } catch (error) {
       console.error("Error writing to NFC:", error);
       Alert.alert("Error", "Failed to write to NFC tag.");
     } finally {
-      // Always clean up the NFC session
       await cancelNfcSession();
     }
   };
 
+  /**
+   * Improved NFC write method with better error handling
+   * @param {string} link - The URL to write to the NFC tag
+   */
   const writeNFCreconnect = async (link) => {
     try {
       console.log("Attempting to write NFC data...");
@@ -214,39 +222,36 @@ const NfcComponent = ({ navigation }) => {
   const writeNFCreconnect3 = async (link) => {
     try {
       console.log("Attempting to write NFC data...");
-      await cancelNfcSession(); // Clean up any previous sessions
-      await NfcManager.requestTechnology(NfcTech.Ndef); // Request NFC technology
+      await cancelNfcSession();
+      await NfcManager.requestTechnology(NfcTech.Ndef);
       console.log("NFC Tag detected, ready for operations.");
 
-      // Retrieve tag details
       const tag = await NfcManager.getTag();
-      console.log("Tag object:", tag); // Log the tag object
+      console.log("Tag object:", tag);
 
-      // Check if the tag supports NDEF
       if (!tag.techTypes.includes("android.nfc.tech.Ndef")) {
         throw new Error("The tag is not NDEF compatible.");
       }
 
-      // Encode the link to NDEF format
       const bytes = Ndef.encodeMessage([Ndef.uriRecord(link)]);
       if (!bytes) throw new Error("Failed to encode NFC message.");
 
       console.log("Encoded NFC message:", bytes);
 
-      // Write the encoded message to the NFC tag
       await NfcManager.ndefHandler.writeNdefMessage(bytes);
       Alert.alert("Success", "Link successfully written to the NFC tag!");
     } catch (error) {
       console.error("Error writing to NFC:", error);
       Alert.alert("Error", error.message || "Failed to write to NFC tag.");
     } finally {
-      // Ensure the session is cleaned up in all cases
       await cancelNfcSession();
       console.log("NFC session cleaned up.");
     }
   };
 
-  // Handle writing to the NFC tag
+  /**
+   * Handle writing to the NFC tag
+   */
   const handleWrite = async () => {
     const link = `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`;
     console.log("Preparing to write NFC tag with link:", link);
@@ -255,22 +260,22 @@ const NfcComponent = ({ navigation }) => {
     }
   };
 
+  /**
+   * Handle sharing profile via QR code
+   */
+  const handleShare = useCallback(() => {
+    handleClickVibration();
+    navigation.navigate("Share Profile", {
+      qrData: JSON.stringify(userData),
+    });
+  }, [handleClickVibration, navigation, userData]);
+
   // Initialize NFC on component mount
   useEffect(() => {
     initializeNFC();
-    return () => {
-      // Clean up on component unmount
       cancelNfcSession();
     };
   }, []);
-
-  // UI Render
-  return (
-    <View style={styles.rowReader}>
-      <View
-        // colors={["#8C78F0", "#E9D7FC", "#8C78F0"]}
-        // start={{ x: 2, y: 1 }}
-        // end={{ x: 0, y: 2 }}
         style={styles.gradientButtonContainer}
       >
         <TouchableOpacity style={styles.button} onPress={handleWrite}>
@@ -283,19 +288,11 @@ const NfcComponent = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View
-        // colors={["#B4804A", "#FABD5F", "#FABD5F"]}
-        // start={{ x: 2, y: 1 }}
-        // end={{ x: 0, y: 2 }}
         style={styles.gradientButtonContainer}
       >
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            handleClickVibration();
-            navigation.navigate("Share Profile", {
-              qrData: JSON.stringify(userData),
-            });
-          }}
+          onPress={handleShare}
         >
           <Ionicons name="share-social-sharp" size={20} color={"#B1804D"} />
           <Text style={styles.buttonText}>Share</Text>
@@ -312,12 +309,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 25,
-    // margin: 20,
   },
   gradientButtonContainer: {
     display: "flex",
     flexDirection: "row",
-    // borderRadius: 50,
   },
   button: {
     padding: 10,
@@ -330,11 +325,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     display: "flex",
     flexDirection: "row",
-    // width: 140,
   },
   buttonText: {
     color: "#2B2C2B",
     fontSize: 14,
     fontWeight: "700",
   },
-});

@@ -1,7 +1,6 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-// import CountryPicker from "react-native-country-picker-modal";
 import {
   View,
   StyleSheet,
@@ -16,6 +15,11 @@ import {
 import { useAuth } from "../../context/AuthProvider";
 import Toast from "react-native-toast-message";
 
+/**
+ * Login screen component for user authentication
+ * Supports both email and phone login (phone login coming soon)
+ * @param {Object} navigation - Navigation object for screen transitions
+ */
 const Login = ({ navigation }) => {
   const { width, height } = Dimensions.get("window");
   const [selectedTab, setSelectedTab] = useState("email");
@@ -29,9 +33,29 @@ const Login = ({ navigation }) => {
   } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
+  /**
+   * Toggle password visibility
+   */
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  
+  /**
+   * Show coming soon message for features not yet implemented
+   */
+  const showComingSoonMessage = () => {
+    Toast.show({
+      type: "error",
+      text1: `Coming Soon`,
+      text2: `Currently This Feature is not available`,
+      position: "top",
+      visibilityTime: 3000,
+    });
+  };
+
+  /**
+   * Render phone number tab button
+   */
   const renderPhoneNumberTab = () => (
     <TouchableOpacity
       style={{
@@ -54,6 +78,9 @@ const Login = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+  /**
+   * Render email tab button
+   */
   const renderEmailTab = () => (
     <TouchableOpacity
       style={{
@@ -76,31 +103,16 @@ const Login = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+  /**
+   * Render appropriate input fields based on selected tab
+   */
   const renderInputFields = () => {
-    const handlePress = () => {
-      Toast.show({
-        type: "error",
-        text1: `Coming Soon`,
-        text2: `Currently This Feature is not available`,
-        position: "top",
-        visibilityTime: 3000,
-      });
-    };
     if (selectedTab === "phone") {
       return (
         <View style={{ marginVertical: 40 }}>
           <View style={styles.rowContainer}>
             <View style={styles.iconContainer}>
-              {/* <CountryPicker
-                {...{
-                  countryCode: "IN",
-                  withFlag: true,
-                  // withCountryNameButton: true,
-                  withAlphaFilter: true,
-                  // onSelect: (country) => console.log(country),
-                }}
-              /> */}
-                <MaterialIcons
+              <MaterialIcons
                 name="phone"
                 size={25}
                 color="#604A49"
@@ -118,9 +130,7 @@ const Login = ({ navigation }) => {
               styles.button,
               { backgroundColor: "#161616", width: width * 0.6 },
             ]}
-            //onPress={() => navigation.navigate("My Card")}
-            //onPress={() => navigation.navigate("Add Fields")}
-            onPress={handlePress}
+            onPress={showComingSoonMessage}
           >
             <Text style={[styles.buttonText, { color: "white" }]}>
               Request OTP
@@ -130,7 +140,7 @@ const Login = ({ navigation }) => {
       );
     } else {
       return (
-        <View style={{marginVertical:15}}>
+        <View style={{ marginVertical: 15 }}>
           <View style={styles.rowContainer}>
             <View style={styles.iconContainer}>
               <MaterialIcons
@@ -146,8 +156,11 @@ const Login = ({ navigation }) => {
               keyboardType="email-address"
               value={loginData.email}
               onChangeText={handleEmailChange}
+              autoCapitalize="none"
+              autoCorrect={false}
             />
           </View>
+          
           <View style={styles.rowContainer}>
             <View style={styles.iconContainer}>
               <MaterialIcons
@@ -183,7 +196,6 @@ const Login = ({ navigation }) => {
               styles.button,
               { backgroundColor: "#161616", width: width * 0.6 },
             ]}
-            //onPress={() => navigation.navigate("First Thing")}
             onPress={handleLogin}
           >
             {isLoginLoading ? (
@@ -197,20 +209,16 @@ const Login = ({ navigation }) => {
     }
   };
 
+  /**
+   * Social login button component
+   * @param {Object} icon - Icon source
+   * @param {string} label - Button label
+   */
   const IconButton = ({ icon, label }) => {
-    const handlePress = () => {
-      Toast.show({
-        type: "error",
-        text1: `Coming Soon`,
-        text2: `Currently This Feature is not available`,
-        position: "top",
-        visibilityTime: 3000,
-      });
-    };
     return (
       <TouchableOpacity
         style={styles.buttonContainerSocial}
-        onPress={handlePress}
+        onPress={showComingSoonMessage}
       >
         <View style={styles.buttonContentSocial}>
           <Image source={icon} style={styles.iconSocial} />
@@ -219,6 +227,11 @@ const Login = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+  
+  /**
+   * Social login buttons grid
+   * @param {Array} buttons - Array of button configurations
+   */
   const Grid = ({ buttons }) => {
     return (
       <View>
@@ -258,13 +271,18 @@ const Login = ({ navigation }) => {
             </View>
 
             <View style={styles.inputContainer}>{renderInputFields()}</View>
-            <TouchableOpacity style={{marginBottom:8}}
-            onPress={()=> navigation.navigate("Reset Password")}>
-            <Text style={{color:"#702DFF"}}>
-            Forgot Password
-            </Text></TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={{ marginBottom: 8 }}
+              onPress={() => navigation.navigate("Reset Password")}
+            >
+              <Text style={{ color: "#702DFF" }}>
+                Forgot Password
+              </Text>
+            </TouchableOpacity>
           </View>
         </LinearGradient>
+        
         <View style={styles.horizontalLineContainer}>
           <View style={styles.horizontalLine} />
           <Text style={styles.horizontalLineText}>OR</Text>
@@ -287,6 +305,7 @@ const Login = ({ navigation }) => {
             },
           ]}
         />
+        
         <View
           style={{
             justifyContent: "center",
@@ -300,25 +319,26 @@ const Login = ({ navigation }) => {
               <Text style={styles.loginLink}>Create an account</Text>
             </Text>
           </TouchableOpacity>
-        
-        <TouchableOpacity
-        style={[styles.circularButton]}
-        onPress={() => navigation.navigate("Landing Screen")}
-      >
-          <MaterialIcons name="arrow-back" size={24} color="white" /> 
-      </TouchableOpacity>
-      </View>
+          
+          <TouchableOpacity
+            style={[styles.circularButton]}
+            onPress={() => navigation.navigate("Landing Screen")}
+          >
+            <MaterialIcons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
 };
+
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   gradientBackground: {
-    //flex: 1,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
     alignItems: "center",
@@ -329,7 +349,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
-
   buttonText: {
     color: "white",
     fontSize: 16,
@@ -356,8 +375,8 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   inputLabel: {
-    fontSize: 16, 
-    fontWeight:"bold"
+    fontSize: 16,
+    fontWeight: "bold",
   },
   input: {
     borderBottomWidth: 1,
@@ -378,11 +397,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignSelf: "center",
   },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   rowContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -395,8 +409,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  icon: {
-    fontSize: 20,
+  visibilityIcon: {
+    padding: 5,
   },
   horizontalLineContainer: {
     flexDirection: "row",
@@ -415,13 +429,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "black",
-  },
-  grid: {
-    elevation: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 15,
-    paddingHorizontal: Dimensions.get("window").width * 0.05,
-    paddingVertical: Dimensions.get("window").height * 0.01,
   },
   buttonContainerSocial: {
     alignItems: "center",
@@ -463,8 +470,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#161616",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom:250
+    marginBottom: 250,
   },
-});
-
-export default Login;

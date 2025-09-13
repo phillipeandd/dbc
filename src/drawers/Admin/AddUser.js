@@ -12,9 +12,9 @@ import {
   Image,
   RefreshControl,
   Alert,
-  Platform
+  Platform,
 } from "react-native";
-import {Picker} from "@react-native-picker/picker";
+import { Picker } from "@react-native-picker/picker";
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
@@ -22,11 +22,18 @@ import AdminFooter from "../../screens/Footer/AdminFooter";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { StatusBar } from "expo-status-bar";
-import {useAuth} from "../../context/AuthProvider";
+import { useAuth } from "../../context/AuthProvider";
 import axios from "axios";
+
+/**
+ * Add User screen for admin to create new employee profiles
+ * @param {Object} navigation - Navigation object for screen transitions
+ */
 const AddUser = ({ navigation }) => {
-  const {userId} = useAuth();
+  const { userId } = useAuth();
   const { width, height } = Dimensions.get("window");
+  
+  // Form state
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -39,31 +46,18 @@ const AddUser = ({ navigation }) => {
   const [userImage, setUserImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  
+  // Password visibility state
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  
+  // Branches data
+  const [branches, setBranches] = useState([]);
 
-  const handleAttachBilll = async (option) => {
-    try {
-      let result;
-      if (option === "camera") {
-        result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          quality: 0.1,
-        });
-      } else if (option === "gallery") {
-        result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          quality: 0.1,
-        });
-      }
-
-      if (!result.canceled) {
-        const resizedImage = await resizeImage(result.uri);
-        setUserImage(resizedImage);
-      }
-    } catch (error) {
-      console.error("Error picking an image", error);
-    }
-  };
-
+  /**
+   * Handle image attachment with platform check and permissions
+   * @param {string} option - 'camera' or 'gallery'
+   */
   const handleAttachBill = async (option) => {
     try {
       if (Platform.OS !== 'ios') {
@@ -85,6 +79,7 @@ const AddUser = ({ navigation }) => {
         );
         return;
       }
+      
       let result;
       if (option === "camera") {
         result = await ImagePicker.launchCameraAsync({
@@ -97,31 +92,38 @@ const AddUser = ({ navigation }) => {
           quality: 0.1,
         });
       }
+
       if (!result.canceled) {
         if (!result.assets || result.assets.length === 0) {
           console.error('No assets selected');
           return;
         }
-        const selectedAsset = result.assets[0]; // Assuming only one asset is selected
-        const resizedImage = await resizeImage(selectedAsset.uri);
+        const selectedAsset = result.assets[0];
+        const resizedImage = await resizeImage(result.uri);
         setUserImage(resizedImage);
       }
     } catch (error) {
       console.error('Error picking an image', error);
     }
   };
-  
+
+  /**
+   * Resize image to optimize file size
+   * @param {string} uri - Image URI to resize
+   * @returns {string} Resized image URI
+   */
   const resizeImage = async (uri) => {
     const resizedImage = await ImageManipulator.manipulateAsync(
       uri,
       [{ resize: { width: 800, height: 600 } }],
       { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
     );
-  
     return resizedImage.uri;
   };
 
-  const [branches, setBranches] = useState([]);
+  /**
+   * Fetch available branches for the company
+   */
   const fetchBranches = useCallback(() => {
     const apiUrl = `https://bc.exploreanddo.com/api/company-branches/${userId}`;
     axios
@@ -140,7 +142,9 @@ const AddUser = ({ navigation }) => {
     fetchBranches();
   }, [fetchBranches]);
 
-
+  /**
+   * Handle user registration with validation
+   */
   const handleRegisterUser = async () => {
     try {
       if (password !== confirm_password) {
@@ -152,6 +156,7 @@ const AddUser = ({ navigation }) => {
         });
         return;
       }
+      
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         Toast.show({
@@ -162,6 +167,7 @@ const AddUser = ({ navigation }) => {
         });
         return;
       }
+      
       setIsLoading(true);
       const formData = new FormData();
       formData.append("user_id", userId);
@@ -179,6 +185,7 @@ const AddUser = ({ navigation }) => {
         name: "userimage.jpg",
         type: "image/jpeg",
       });
+      
       const response = await fetch(
         `https://bc.exploreanddo.com/api/add-nfc-user`,
         {
@@ -187,7 +194,7 @@ const AddUser = ({ navigation }) => {
         }
       );
       const data = await response.json();
-      //console.log("api data employee", data);
+      
       if (response.ok) {
         Toast.show({
           type: "success",
@@ -195,6 +202,8 @@ const AddUser = ({ navigation }) => {
           position: "top",
           visibilityTime: 4000,
         });
+        
+        // Reset form
         setFirstName("");
         setLastName("");
         setEmail("");
@@ -228,18 +237,19 @@ const AddUser = ({ navigation }) => {
     }
   };
 
-  const [isPasswordVisible, setPasswordVisible] = useState(false);
-
+  /**
+   * Toggle password visibility
+   */
   const togglePasswordVisibility = () => {
     setPasswordVisible(!isPasswordVisible);
   };
 
-  const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-
+  /**
+   * Toggle confirm password visibility
+   */
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisible(!isConfirmPasswordVisible);
   };
-
 
   return (
     <View style={[styles.container, { backgroundColor: "#6E2CFB" }]}>
@@ -258,79 +268,55 @@ const AddUser = ({ navigation }) => {
         start={[0, 0]}
         end={[0, 1]}
       >
-      <ScrollView style={[styles.container, { marginBottom: "20%" }]}>
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#ECEDF2",
-              width: 120,
-              height: 120,
-              borderRadius: 60,
-              borderWidth: 2,
-              borderColor: "#702DFF",
-              justifyContent: "center",
-              alignItems: "center",
-              elevation: 1,
-              marginTop:1,
-            }}
-            onPress={() => setShowModal(true)}
-          >
-            {userImage ? (
-              <Image
-                source={{ uri: userImage }}
-                style={{ width: 110, height: 110, borderRadius: 55 }}
-                //resizeMode="contain"
-              />
-            ) : (
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <MaterialCommunityIcons name="camera" size={40} color="black" />
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <Modal visible={showModal} animationType="slide" transparent={true}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                padding: 20,
-                borderRadius: 10,
-              }}
+        <ScrollView style={[styles.container, { marginBottom: "20%" }]}>
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <TouchableOpacity
+              style={styles.imagePickerButton}
+              onPress={() => setShowModal(true)}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  handleAttachBill("camera");
-                  setShowModal(false);
-                }}
-              >
-                <Text style={{ marginBottom: 20 }}>Take a Photo</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  handleAttachBill("gallery");
-                  setShowModal(false);
-                }}
-              >
-                <Text>Choose from Gallery</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowModal(false)}>
-                <Text style={{ marginTop: 20 }}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+              {userImage ? (
+                <Image
+                  source={{ uri: userImage }}
+                  style={{ width: 110, height: 110, borderRadius: 55 }}
+                />
+              ) : (
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                  <MaterialCommunityIcons name="camera" size={40} color="black" />
+                </View>
+              )}
+            </TouchableOpacity>
           </View>
-        </Modal>
-        {Platform.OS === "android" && (
-          <StatusBar backgroundColor="#702DFF" barStyle="light-content" />
-        )}
-        
+
+          <Modal visible={showModal} animationType="slide" transparent={true}>
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleAttachBill("camera");
+                    setShowModal(false);
+                  }}
+                >
+                  <Text style={{ marginBottom: 20 }}>Take a Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleAttachBill("gallery");
+                    setShowModal(false);
+                  }}
+                >
+                  <Text>Choose from Gallery</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowModal(false)}>
+                  <Text style={{ marginTop: 20 }}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+          
+          {Platform.OS === "android" && (
+            <StatusBar backgroundColor="#702DFF" barStyle="light-content" />
+          )}
+          
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <View>
@@ -338,10 +324,8 @@ const AddUser = ({ navigation }) => {
                 <TextInput
                   style={[styles.input, { width: width * 0.45 }]}
                   placeholder="First Name"
-                  type="text"
-                  name="firstname"
                   value={firstname}
-                  onChangeText={(text) => setFirstName(text)}
+                  onChangeText={setFirstName}
                 />
               </View>
               <View>
@@ -349,10 +333,8 @@ const AddUser = ({ navigation }) => {
                 <TextInput
                   style={[styles.input, { width: width * 0.45 }]}
                   placeholder="Last name"
-                  type="text"
-                  name="lastname"
                   value={lastname}
-                  onChangeText={(text) => setLastName(text)}
+                  onChangeText={setLastName}
                 />
               </View>
             </View>
@@ -361,44 +343,31 @@ const AddUser = ({ navigation }) => {
             <TextInput
               style={[styles.input, { width: width * 0.9 }]}
               placeholder="Email"
-              type="email-address"
-              name="email"
+              keyboardType="email-address"
               value={email}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              autoCorrect={false}
             />
 
             <Text style={styles.inputLabel}>Mobile no</Text>
             <TextInput
               style={[styles.input, { width: width * 0.9 }]}
               placeholder="Mobile"
-              type="text"
               keyboardType="phone-pad"
-              name="phone"
               value={phone}
-              onChangeText={(text) => setPhone(text)}
+              onChangeText={setPhone}
               maxLength={10}
             />
             
-            {/*
-            <Text style={styles.inputLabel}>Branch Name</Text>
-            <TextInput
-              style={[styles.input, { width: width * 0.9 }]}
-              placeholder="Branch Name"
-              type="text"
-              name="branch_name"
-              value={branch_name}
-              onChangeText={(text) => setBranchName(text)}
-              /> */}
             <View style={styles.inputContainer}>
               <View>
                 <Text style={styles.inputLabel}>Position</Text>
                 <TextInput
                   style={[styles.input, { width: width * 0.45 }]}
                   placeholder="Position"
-                  type="text"
-                  name="title"
                   value={title}
-                  onChangeText={(text) => setTitle(text)}
+                  onChangeText={setTitle}
                 />
               </View>
               <View>
@@ -406,65 +375,59 @@ const AddUser = ({ navigation }) => {
                 <TextInput
                   style={[styles.input, { width: width * 0.45 }]}
                   placeholder="NFC Serial No"
-                  type="text"
-                  name="serial_no"
                   value={serial_no}
-                  onChangeText={(text) => setSerialNo(text)}
+                  onChangeText={setSerialNo}
                 />
               </View>
             </View>
+            
             <View style={styles.inputContainer}>
               <View>
                 <Text style={styles.inputLabel}>Password</Text>
                 <TextInput
                   style={[styles.input, { width: width * 0.45 }]}
                   placeholder="Password"
-                  type="text"
-                  name="password"
                   value={password}
-                  onChangeText={(text) => setPassword(text)}
+                  onChangeText={setPassword}
                   secureTextEntry={!isPasswordVisible}
-              />
-              <TouchableOpacity
-                style={styles.icon}
-                onPress={togglePasswordVisibility}
-              >
-                <Ionicons
-                  name={isPasswordVisible ? "eye-off" : "eye"}
-                  size={24}
-                  color="black"
                 />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.icon}
+                  onPress={togglePasswordVisibility}
+                >
+                  <Ionicons
+                    name={isPasswordVisible ? "eye-off" : "eye"}
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
               </View>
               <View>
                 <Text style={styles.inputLabel}>Confirm Password</Text>
                 <TextInput
                   style={[styles.input, { width: width * 0.45 }]}
                   placeholder="Confirm Password"
-                  type="text"
-                  name="confirm_password"
                   value={confirm_password}
-                  onChangeText={(text) => setConfirmPassword(text)}
+                  onChangeText={setConfirmPassword}
                   secureTextEntry={!isConfirmPasswordVisible}
-              />
-              <TouchableOpacity
-                style={styles.icon}
-                onPress={toggleConfirmPasswordVisibility}
-              >
-                <Ionicons
-                  name={isConfirmPasswordVisible ? "eye-off" : "eye"}
-                  size={24}
-                  color="black"
                 />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.icon}
+                  onPress={toggleConfirmPasswordVisibility}
+                >
+                  <Ionicons
+                    name={isConfirmPasswordVisible ? "eye-off" : "eye"}
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
               </View>
             </View>
+            
             <Text style={styles.inputLabel}>Branch Name</Text>
             <Picker
               selectedValue={branch_name}
-              onValueChange={(itemValue, itemIndex) => setBranchName(itemValue)}
-              //style={[styles.input, { width: width * 0.9 }]}
-              
+              onValueChange={(itemValue) => setBranchName(itemValue)}
             >
               <Picker.Item
                 label="Select a branch"
@@ -479,13 +442,13 @@ const AddUser = ({ navigation }) => {
                 />
               ))}
             </Picker>
+            
             <View style={{ justifyContent: "center", alignItems: "center" }}>
               <TouchableOpacity
                 style={[
                   styles.button,
-                  { backgroundColor: "#702DFF", width: width * 0.6, marginBottom:180 },
+                  { backgroundColor: "#702DFF", width: width * 0.6, marginBottom: 180 },
                 ]}
-                //onPress={() => navigation.navigate("Login")}
                 onPress={handleRegisterUser}
               >
                 {isLoading ? (
@@ -497,12 +460,13 @@ const AddUser = ({ navigation }) => {
             </View>
           </View>
         </ScrollView>
-        
         <AdminFooter navigation={navigation} />
       </LinearGradient>
     </View>
   );
 };
+
+export default AddUser;
 
 const styles = StyleSheet.create({
   container: {
@@ -531,6 +495,29 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     marginTop: Dimensions.get("window").height * 0.03,
   },
+  imagePickerButton: {
+    backgroundColor: "#ECEDF2",
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: "#702DFF",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 1,
+    marginTop: 1,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+  },
   formContainer: {
     width: Dimensions.get("window").width * 0.9,
     paddingVertical: Dimensions.get("window").width * 0.05,
@@ -546,10 +533,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
   },
-  icon:{
-    position:"absolute",
-    right:10,
-    top:35
+  icon: {
+    position: "absolute",
+    right: 10,
+    top: 35,
   },
   input: {
     height: Dimensions.get("window").height * 0.05,
@@ -559,7 +546,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#F1ECF8",
     elevation: 1,
-    //shadowColor: "gray",
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
@@ -578,10 +564,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  pickerItem:{
-    fontSize:14,
-    color:"#702EFE"
-  }
-});
-
-export default AddUser;

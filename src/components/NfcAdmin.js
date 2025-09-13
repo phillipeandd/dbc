@@ -8,29 +8,31 @@ import { useAuth } from "../context/AuthProvider";
 // Initialize NFC Manager
 NfcManager.start();
 
-const NfcAdmin = ({ navigation,empId }) => {
-  const { userId,handleClickVibration } = useAuth();
+/**
+ * NFC Admin Component for handling NFC operations in admin context
+ * @param {Object} navigation - Navigation object
+ * @param {string} empId - Employee ID for NFC operations
+ */
+const NfcAdmin = ({ navigation, empId }) => {
+  const { userId, handleClickVibration } = useAuth();
   const { width, height } = Dimensions.get("window");
   const [userData, setUserData] = useState(
     `https://bc.exploreanddo.com/get-web-nfc-user/${empId}`
   );
 
-  // console.log("ee",empId);
-  // console.log("eeuid",userId);
+  /**
+   * Handle sharing profile via QR code
+   */
   const handleShare = () => {
-    // Generate QR code data based on user data
-   
     handleClickVibration();
-    // const qrData = JSON.stringify(userData);
-    // Navigate to Share Profile screen
     const updatedUserData = `https://bc.exploreanddo.com/get-web-nfc-user/${empId}`;
     const qrData = JSON.stringify(updatedUserData);
     navigation.navigate("Share Profile", { qrData });
   };
 
-  
-
-  // Function to initialize NFC Manager
+  /**
+   * Initialize NFC Manager
+   */
   const initializeNFC = async () => {
     try {
       await NfcManager.start();
@@ -40,18 +42,22 @@ const NfcAdmin = ({ navigation,empId }) => {
     }
   };
 
-  // Clean up NFC session
+  /**
+   * Clean up active NFC session
+   */
   const cancelNfcSession = async () => {
     try {
-      await NfcManager.cancelTechnologyRequest(); // Cancel any active NFC session
+      await NfcManager.cancelTechnologyRequest();
       console.log("NFC session successfully canceled.");
     } catch (error) {
       console.warn("Error while canceling NFC session:", error);
     }
   };
 
-
-  // Check if NFC is supported and enabled
+  /**
+   * Check if NFC is supported and enabled on the device
+   * @returns {boolean} True if NFC is available, false otherwise
+   */
   const checkNfcState = async () => {
     try {
       const isSupported = await NfcManager.isSupported();
@@ -76,63 +82,58 @@ const NfcAdmin = ({ navigation,empId }) => {
     }
   };
 
+  /**
+   * Write data to NFC tag with comprehensive error handling
+   * @param {string} link - The URL to write to the NFC tag
+   */
   const writeNFCreconnect3 = async (link) => {
     try {
-        console.log("Attempting to write NFC data...");
-        await cancelNfcSession(); // Clean up any previous sessions
-        await NfcManager.requestTechnology(NfcTech.Ndef); // Request NFC technology
-        console.log("NFC Tag detected, ready for operations.");
-  
-        // Retrieve tag details
-        const tag = await NfcManager.getTag();
-        console.log("Tag object:", tag); // Log the tag object
-  
-        // Check if the tag supports NDEF
-        if (!tag.techTypes.includes("android.nfc.tech.Ndef")) {
-            throw new Error("The tag is not NDEF compatible.");
-        }
-  
-        // Encode the link to NDEF format
-        const bytes = Ndef.encodeMessage([Ndef.uriRecord(link)]);
-        if (!bytes) throw new Error("Failed to encode NFC message.");
-  
-        console.log("Encoded NFC message:", bytes);
-  
-        // Write the encoded message to the NFC tag
-        await NfcManager.ndefHandler.writeNdefMessage(bytes);
-        Alert.alert("Success", "Link successfully written to the NFC tag!");
+      console.log("Attempting to write NFC data...");
+      await cancelNfcSession();
+      await NfcManager.requestTechnology(NfcTech.Ndef);
+      console.log("NFC Tag detected, ready for operations.");
+
+      const tag = await NfcManager.getTag();
+      console.log("Tag object:", tag);
+
+      if (!tag.techTypes.includes("android.nfc.tech.Ndef")) {
+        throw new Error("The tag is not NDEF compatible.");
+      }
+
+      const bytes = Ndef.encodeMessage([Ndef.uriRecord(link)]);
+      if (!bytes) throw new Error("Failed to encode NFC message.");
+
+      console.log("Encoded NFC message:", bytes);
+
+      await NfcManager.ndefHandler.writeNdefMessage(bytes);
+      Alert.alert("Success", "Link successfully written to the NFC tag!");
     } catch (error) {
-        console.error("Error writing to NFC:", error);
-        Alert.alert("Error", error.message || "Failed to write to NFC tag.");
+      console.error("Error writing to NFC:", error);
+      Alert.alert("Error", error.message || "Failed to write to NFC tag.");
     } finally {
-        // Ensure the session is cleaned up in all cases
-        await cancelNfcSession();
-        console.log("NFC session cleaned up.");
+      await cancelNfcSession();
+      console.log("NFC session cleaned up.");
     }
   };
-  
-  
-  
-  
-    // Handle writing to the NFC tag
-    const handleWrite = async () => {
-      const link = `https://bc.exploreanddo.com/get-web-nfc-user/${empId}`;
-      console.log("Preparing to write NFC tag with link:", link);
-      if (await checkNfcState()) {
-        await writeNFCreconnect3(link);
-      }
+
+  /**
+   * Handle writing to the NFC tag
+   */
+  const handleWrite = async () => {
+    const link = `https://bc.exploreanddo.com/get-web-nfc-user/${empId}`;
+    console.log("Preparing to write NFC tag with link:", link);
+    if (await checkNfcState()) {
+      await writeNFCreconnect3(link);
+    }
+  };
+
+  // Initialize NFC on component mount
+  useEffect(() => {
+    initializeNFC();
+    return () => {
+      cancelNfcSession();
     };
-  
-  
-  
-    // Initialize NFC on component mount
-    useEffect(() => {
-      initializeNFC();
-      return () => {
-        // Clean up on component unmount
-        cancelNfcSession();
-      };
-    }, []);
+  }, []);
 
   return (
     <View style={styles.rowReader}>
@@ -181,4 +182,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});

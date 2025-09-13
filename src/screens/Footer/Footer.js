@@ -3,97 +3,95 @@ import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthProvider";
 
+/**
+ * Footer navigation component with tab-style navigation
+ * @param {Object} navigation - Navigation object for screen transitions
+ */
 const Footer = ({ navigation }) => {
   const { themeIds, handleClickVibration } = useAuth();
+  
+  /**
+   * Get the appropriate theme screen name based on theme ID
+   * @param {number} themeId - The theme ID
+   * @returns {string} Screen name for navigation
+   */
   const handleThemeNavigation = (themeId) => {
-    switch (themeId) {
-      case 1:
-        return "UserTheme1";
-      case 2:
-        return "UserTheme2";
-      case 3:
-        return "UserTheme3";
-      case 4:
-        return "UserTheme4";
-      case 5:
-        return "UserTheme5";
-      case 6:
-        return "UserTheme6";
-      default:
-        return "My Card";
-    }
+    const themeScreens = {
+      1: "UserTheme1",
+      2: "UserTheme2",
+      3: "UserTheme3",
+      4: "UserTheme4",
+      5: "UserTheme5",
+      6: "UserTheme6",
+    };
+    return themeScreens[themeId] || "My Card";
+  };
+
+  /**
+   * Navigate to contacts/leads screen
+   */
+  const navigateToContacts = () => {
+    handleClickVibration();
+    navigation.navigate("Contacts");
+  };
+
+  /**
+   * Navigate to settings screen
+   */
+  const navigateToSettings = () => {
+    handleClickVibration();
+    navigation.navigate("Settings");
+  };
+
+  /**
+   * Navigate to user's theme screen
+   */
+  const navigateToTheme = () => {
+    handleClickVibration();
+    const themeId = Number(themeIds);
+    const themeScreen = handleThemeNavigation(themeId);
+    navigation.navigate(themeScreen);
   };
 
   return (
     <View style={styles.footer}>
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={() => {
-          handleClickVibration();
-          navigation.navigate("Contacts");
-        }}
+        onPress={navigateToContacts}
       >
-        <TouchableOpacity
-          style={styles.buttonContent}
-          onPress={() => {
-            handleClickVibration();
-            navigation.navigate("Contacts");
-          }}
-        >
+        <View style={styles.buttonContent}>
           <MaterialIcons
             name="people-outline"
             size={30}
             color="black"
-            onPress={() => {
-              handleClickVibration();
-              navigation.navigate("Contacts");
-            }}
           />
           <Text style={[styles.inputLabel, { fontWeight: "bold" }]}>
             Leads
           </Text>
-        </TouchableOpacity>
+        </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.footerButton}
-        onPress={() => {
-          //const themeId = loggedInUser.theme_id;
-          handleClickVibration();
-          const themeId = Number(themeIds);
-          const themeScreen = handleThemeNavigation(themeId);
-          navigation.navigate(themeScreen);
-        }}
+        onPress={navigateToTheme}
       >
         <MaterialIcons name="credit-card" size={30} color="white" />
       </TouchableOpacity>
+      
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={() => {
-          handleClickVibration();
-          navigation.navigate("Settings");
-        }}
+        onPress={navigateToSettings}
       >
-        <TouchableOpacity
-          style={styles.buttonContent}
-          onPress={() => {
-            handleClickVibration();
-            navigation.navigate("Settings");
-          }}
-        >
+        <View style={styles.buttonContent}>
           <MaterialIcons
             name="settings"
             size={30}
             color="black"
-            onPress={() => {
-              handleClickVibration();
-              navigation.navigate("Settings");
-            }}
           />
           <Text style={[styles.inputLabel, { fontWeight: "bold" }]}>
             Settings
           </Text>
-        </TouchableOpacity>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -125,7 +123,6 @@ const styles = StyleSheet.create({
     padding: 15,
     zIndex: 2,
   },
-
   buttonContainer: {
     alignItems: "center",
   },
@@ -134,7 +131,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 8,
   },
-  buttonText: {
-    marginTop: 5,
+  inputLabel: {
+    fontSize: 12,
+    marginTop: 4,
   },
-});

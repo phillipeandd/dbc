@@ -8,9 +8,12 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-
 import Toast from "react-native-toast-message";
-import * as ImagePicker from "expo-image-picker";
+
+/**
+ * Registration screen component for new user signup
+ * @param {Object} navigation - Navigation object for screen transitions
+ */
 const Register = ({ navigation }) => {
   const [registrationData, setRegistrationData] = useState({
     firstname: "",
@@ -21,8 +24,10 @@ const Register = ({ navigation }) => {
   });
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  /**
+   * Handle user registration with validation and API call
+   */
   const handleRegistration = async () => {
-    // Check if the password matches the confirm_password
     if (registrationData.password !== confirmPassword) {
       Toast.show({
         type: "error",
@@ -46,7 +51,6 @@ const Register = ({ navigation }) => {
       );
 
       const data = await response.json();
-      //console.log(data);
       Toast.show({
         type: "success",
         text1: `Welcome ${registrationData.firstname}`,
@@ -55,17 +59,38 @@ const Register = ({ navigation }) => {
         visibilityTime: 4000,
       });
       navigation.navigate("Login");
+      
+      // Reset form data
       setRegistrationData({
         firstname: "",
         lastname: "",
-        store_name:"",
+        store_name: "",
         password: "",
         mobile: "",
       });
       setConfirmPassword("");
     } catch (error) {
       console.error("Registration error:", error);
+      Toast.show({
+        type: "error",
+        text1: "Registration Failed",
+        text2: "Please try again later",
+        position: "top",
+        visibilityTime: 4000,
+      });
     }
+  };
+
+  /**
+   * Update registration data field
+   * @param {string} field - Field name to update
+   * @param {string} value - New value for the field
+   */
+  const updateRegistrationField = (field, value) => {
+    setRegistrationData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   return (
@@ -76,17 +101,13 @@ const Register = ({ navigation }) => {
         >
           <Image source={require("../../assets/loginlogo.png")} />
         </View>
+        
         <View style={styles.control}>
           <TextInput
             placeholder="First Name"
             style={[styles.input]}
             value={registrationData.firstname}
-            onChangeText={(text) =>
-              setRegistrationData({
-                ...registrationData,
-                firstname: text,
-              })
-            }
+            onChangeText={(text) => updateRegistrationField("firstname", text)}
             backgroundColor="white"
           />
         </View>
@@ -96,26 +117,17 @@ const Register = ({ navigation }) => {
             placeholder="Last Name"
             style={[styles.input]}
             value={registrationData.lastname}
-            onChangeText={(text) =>
-              setRegistrationData({
-                ...registrationData,
-                lastname: text,
-              })
-            }
+            onChangeText={(text) => updateRegistrationField("lastname", text)}
             backgroundColor="white"
           />
         </View>
+        
         <View style={styles.control}>
           <TextInput
             placeholder="Store Name"
             style={[styles.input]}
             value={registrationData.store_name}
-            onChangeText={(text) =>
-              setRegistrationData({
-                ...registrationData,
-                store_name: text,
-              })
-            }
+            onChangeText={(text) => updateRegistrationField("store_name", text)}
             backgroundColor="white"
           />
         </View>
@@ -125,14 +137,10 @@ const Register = ({ navigation }) => {
             placeholder="Mobile"
             style={[styles.input]}
             value={registrationData.mobile}
-            onChangeText={(text) =>
-              setRegistrationData({
-                ...registrationData,
-                mobile: text,
-              })
-            }
+            onChangeText={(text) => updateRegistrationField("mobile", text)}
             backgroundColor="white"
             maxLength={10}
+            keyboardType="phone-pad"
           />
         </View>
 
@@ -142,15 +150,11 @@ const Register = ({ navigation }) => {
             placeholder="Password"
             style={[styles.input]}
             value={registrationData.password}
-            onChangeText={(text) =>
-              setRegistrationData({
-                ...registrationData,
-                password: text,
-              })
-            }
+            onChangeText={(text) => updateRegistrationField("password", text)}
             backgroundColor="white"
           />
         </View>
+        
         <View style={styles.control}>
           <TextInput
             secureTextEntry
@@ -200,15 +204,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 8,
   },
-
   input: {
     flex: 1,
     paddingHorizontal: 15,
     padding: 10,
     borderRadius: 10,
-    // Add elevation for box shadow (for Android)
-    elevation: 2, // You can adjust the value for the desired shadow effect
-    // Add shadow for box shadow (for iOS)
+    elevation: 2,
     shadowColor: "black",
     shadowOffset: {
       width: 1,
@@ -217,7 +218,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
   },
-
   button: {
     backgroundColor: "#702DFF",
     paddingHorizontal: 25,
@@ -228,4 +228,3 @@ const styles = StyleSheet.create({
     marginTop: 40,
     width: 300,
   },
-});
