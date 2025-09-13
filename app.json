@@ -2,26 +2,10 @@
   "expo": {
     "name": "digitalbuisnesscard",
     "slug": "digitalbuisnesscard",
-    "version": "2.0.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "plugins": [
-      "react-native-nfc-manager",
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "compileSdkVersion": 34,
-            "targetSdkVersion": 34,
-            "buildToolsVersion": "34.0.0"
-          },
-          "ios": {
-            "deploymentTarget": "13.4"
-          }
-        }
-      ]
-    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -31,34 +15,21 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.phillip_port.digitalbuisnesscard"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "permissions": [
-        "NOTIFICATIONS",
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ],
-      "package": "com.phillip_port.digitalbuisnesscard"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "output": "static"
     },
-    "extra": {
-      "eas": {
-        "projectId": "f7210dfb-ff28-4447-a5af-b5140433f910"
-      }
-    },
-    "updates": {
-      "enabled": false
-    },
+    "plugins": [
+      "expo-build-properties"
+    ],
     "scheme": "digitalbuisnesscard"
   }
 }
