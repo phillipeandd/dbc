@@ -67,6 +67,7 @@ const Input = ({
   return (
     <View style={[containerStyle, style]}>
       {label && <Text style={labelStyle}>{label}</Text>}
+      }
       <View style={inputContainerStyle}>
         <TextInput
           style={[textInputStyle, inputStyle]}
@@ -97,6 +98,7 @@ const Input = ({
         )}
       </View>
       {error && <Text style={errorStyle}>{error}</Text>}
+      }
     </View>
   );
 };

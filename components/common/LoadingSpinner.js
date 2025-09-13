@@ -33,6 +33,7 @@ const LoadingSpinner = ({
         color={color || theme.colors.primary[500]} 
       />
       {text && <Text style={textStyle}>{text}</Text>}
+      }
     </View>
   );
 };

@@ -680,6 +680,7 @@ function Root({ navigation }) {
     <>
       <Drawer.Navigator
         drawerContent={(props) => <CustomDrawerContent {...props} />}
+        }
         screenOptions={{
           drawerStyle: {
             width: 260,
