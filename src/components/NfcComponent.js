@@ -6,8 +6,8 @@ import {
   View,
   Alert,
   Dimensions,
+  Platform,
 } from "react-native";
-import NfcManager, { NfcTech, Ndef } from "react-native-nfc-manager";
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -15,8 +15,14 @@ import {
 } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthProvider";
 
-// Initialize NFC Manager
-NfcManager.start();
+// Conditionally import NFC Manager only on mobile platforms
+let NfcManager, NfcTech, Ndef;
+if (Platform.OS !== 'web') {
+  const nfcModule = require("react-native-nfc-manager");
+  NfcManager = nfcModule.default;
+  NfcTech = nfcModule.NfcTech;
+  Ndef = nfcModule.Ndef;
+}
 
 /**
  * NFC Component for handling NFC operations and profile sharing
@@ -34,6 +40,9 @@ const NfcComponent = ({ navigation }) => {
    * Initialize NFC Manager
    */
   const initializeNFC = async () => {
+    if (Platform.OS === 'web') {
+      return;
+    }
     try {
       await NfcManager.start();
       console.log("NFC Manager initialized");
@@ -46,6 +55,9 @@ const NfcComponent = ({ navigation }) => {
    * Clean up active NFC session
    */
   const cancelNfcSession = async () => {
+    if (Platform.OS === 'web') {
+      return;
+    }
     try {
       await NfcManager.cancelTechnologyRequest();
       console.log("NFC session successfully canceled.");
@@ -59,6 +71,10 @@ const NfcComponent = ({ navigation }) => {
    * @returns {boolean} True if NFC is available, false otherwise
    */
   const checkNfcState = async () => {
+    if (Platform.OS === 'web') {
+      Alert.alert("Error", "NFC is not supported on web browsers.");
+      return false;
+    }
     try {
       const isSupported = await NfcManager.isSupported();
       console.log("NFC Supported:", isSupported);
@@ -220,6 +236,10 @@ const NfcComponent = ({ navigation }) => {
   };
 
   const writeNFCreconnect3 = async (link) => {
+    if (Platform.OS === 'web') {
+      Alert.alert("Error", "NFC is not supported on web browsers.");
+      return;
+    }
     try {
       console.log("Attempting to write NFC data...");
       await cancelNfcSession();
@@ -253,6 +273,10 @@ const NfcComponent = ({ navigation }) => {
    * Handle writing to the NFC tag
    */
   const handleWrite = async () => {
+    if (Platform.OS === 'web') {
+      Alert.alert("Error", "NFC is not supported on web browsers.");
+      return;
+    }
     const link = `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`;
     console.log("Preparing to write NFC tag with link:", link);
     if (await checkNfcState()) {
