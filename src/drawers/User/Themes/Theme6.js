@@ -69,10 +69,6 @@ const Theme6 = ({ navigation }) => {
 
   useEffect(() => {
     fetchSocialData();
-    const intervalId = setInterval(() => {
-      fetchSocialData();
-    }, 5000);
-    return () => clearInterval(intervalId);
   }, [fetchSocialData]);
 
   const [refreshing, setRefreshing] = useState(false);

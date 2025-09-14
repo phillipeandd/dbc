@@ -47,10 +47,6 @@ const AdminHome = ({ navigation }) => {
 
   useEffect(() => {
     fetchNfcUserData();
-    const intervalId = setInterval(() => {
-      fetchNfcUserData();
-    }, 3000);
-    return () => clearInterval(intervalId);
   }, [fetchNfcUserData]);
 
   const [branchesCount, setBranchesCount] = useState("");
