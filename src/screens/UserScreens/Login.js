@@ -179,15 +179,19 @@ const Login = ({ navigation }) => {
                 onChangeText={handlePasswordChange}
               />
               <TouchableOpacity
-                onPress={togglePasswordVisibility}
-                style={styles.visibilityIcon}
-              >
-                <MaterialIcons
-                  name={showPassword ? "visibility" : "visibility-off"}
-                  size={25}
-                  <Text style={[styles.buttonText, { color: "white" }]}>Login</Text>
-                />
-              </TouchableOpacity>
+  onPress={togglePasswordVisibility}
+  style={styles.visibilityIcon}
+>
+  <MaterialIcons
+    name={showPassword ? "visibility" : "visibility-off"}
+    size={25}
+    color="white"
+  />
+  <Text style={[styles.buttonText, { color: "white" }]}>
+    Login
+  </Text>
+</TouchableOpacity>
+
             </View>
           </View>
 
