@@ -262,6 +262,7 @@ const Login = ({ navigation }) => {
                 { color: "white", fontWeight: 800 },
               ]}
               onPress={() => handleLogin(navigation)}
+            >
               Login Account
             </Text>
             <Text style={[styles.welcomeMessage, { fontSize: 16 }]}>
