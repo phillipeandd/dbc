@@ -8,15 +8,12 @@ import {
   RefreshControl,
   Image,
   Linking,
-  FlatList,
-  ImageBackground,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthProvider";
@@ -100,7 +97,7 @@ const Theme7 = ({ navigation }) => {
 
   const socialKeys = [
     "whatsapp",
-    "twitter",
+    "twitter", 
     "linkedIn",
     "youtube",
     "facebook",
@@ -348,24 +345,6 @@ const Theme7 = ({ navigation }) => {
     });
   };
 
-  const renderItem = ({ item }) => {
-    const { type, value } = item;
-    if (!value || value === "null" || value === "") {
-      return null;
-    }
-    const imageSource = imageSources[type];
-    return (
-      <TouchableOpacity style={styles.itemContainer}>
-        <TouchableOpacity
-          style={styles.socialButton}
-          onPress={() => handleSocialMediaPress(type)}
-        >
-          <Image source={imageSource} style={styles.socialIcon} />
-        </TouchableOpacity>
-      </TouchableOpacity>
-    );
-  };
-
   const imageSources = {
     whatsapp: require("../../../../assets/social/whatsapp.gif"),
     instagram: require("../../../../assets/social/instagram.gif"),
@@ -381,260 +360,172 @@ const Theme7 = ({ navigation }) => {
     reddit: require("../../../../assets/social/icons8-reddit-48.png"),
   };
 
-  // Filter social media items that have valid values
-  const validSocialItems = socialKeys.filter(
-    (type) => social && social[type] && social[type] !== "null" && social[type] !== ""
-  );
+  const handleShareProfile = async () => {
+    handleClickVibration();
+    try {
+      const userData = `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`;
+      const qrData = JSON.stringify(userData);
+      navigation.navigate("Share Profile", { qrData });
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Header Section */}
-      <View style={styles.headerSection}>
-        <LinearGradient
-          colors={["#FFFFFF", "#F8FAFE"]}
-          style={styles.headerGradient}
-          start={[0, 0]}
-          end={[0, 1]}
-        >
-          <View style={styles.profileImageContainer}>
-            <View style={styles.profileImageWrapper}>
-              {seeUser && seeUser?.user?.userImage ? (
-                <Image
-                  source={{
-                    uri: `https://bc.exploreanddo.com/${seeUser.user.userImage}`,
-                  }}
-                  style={styles.profileImage}
-                />
-              ) : (
-                <Image
-                  source={require("../../../../assets/user.jpg")}
-                  style={styles.profileImage}
-                />
-              )}
-            </View>
-          </View>
-          
-          {/* Name and Title */}
-          <View style={styles.nameContainer}>
-            <Text style={styles.nameText}>
-              {seeUser?.user?.firstname || "Alan"} {seeUser?.user?.lastname || "Smith"}
-            </Text>
-            <Text style={styles.titleText}>
-              {seeUser?.user?.user_details?.title || "Android Driver"}
-            </Text>
-            <View style={styles.companyBadge}>
-              <Text style={styles.companyText}>
-                {seeUser?.company?.companyname || seeUser?.user?.user_details?.company_name || "Maximum Horizon AI"}
-              </Text>
-            </View>
-          </View>
-        </LinearGradient>
-      </View>
-      <View style={styles.aboutSection}>
-          <Text style={styles.sectionTitle}>About Me</Text>
-          <View style={styles.divider} />
-          <Text style={styles.aboutText}>
-            {seeUser?.user?.user_details?.headline || 
-             "Lorem ipsum dolor sit amet consectetur adipiscing elit."}
-          </Text>
-        </View>
-        {/* Contact Information */}
-        <View style={styles.contactSection}>
-          <TouchableOpacity style={styles.contactItem} onPress={handlePhonePress}>
-            <View style={styles.contactIconContainer}>
-              <MaterialIcons name="phone" size={20} color="#2C3E50" />
-            </View>
-            <Text style={styles.contactText}>
-              {seeUser?.user?.phone || "6265898600"}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
-            <View style={styles.contactIconContainer}>
-              <MaterialIcons name="email" size={20} color="#2C3E50" />
-            </View>
-            <Text style={styles.contactText}>
-              {seeUser?.user?.email || "alan@gmail.com"}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.contactItem} onPress={handleWebsitePress}>
-            <View style={styles.contactIconContainer}>
-              <MaterialCommunityIcons name="web" size={20} color="#2C3E50" />
-            </View>
-            <Text style={styles.contactText}>
-              {seeUser?.company?.website || "https://engloremundi"}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.contactItem} onPress={handleLocationPress}>
-            <View style={styles.contactIconContainer}>
-              <MaterialIcons name="location-on" size={20} color="#2C3E50" />
-            </View>
-            <Text style={styles.contactText}>
-              {seeUser?.user?.user_details?.address || "Hyderabad"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Social Media Section */}
-        {validSocialItems.length > 0 && (
-          <View style={styles.socialSection}>
-            <Text style={styles.sectionTitle}>Connect with me</Text>
-            <View style={styles.divider} />
-            <View style={styles.socialMediaGrid}>
-              {socialKeys
-                .filter((type) => {
-                  const value = social[type];
-                  return value !== "null" && value !== null && value !== "";
-                })
-                .map((type) => {
-                  const value = social[type];
-                  const imageSource = imageSources[type];
-                  return (
-                    <TouchableOpacity 
-                      key={type} 
-                      style={styles.itemContainer}
-                      onPress={() => handleSocialMediaPress(type)}
-                    >
-                      <View style={styles.socialButton}>
-                        <Image source={imageSource} style={styles.socialIcon} />
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-            </View>
-          </View>
-        )}
-
       <ScrollView
         style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContent}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={false}
       >
+        {/* Profile Header Card */}
+        <View style={styles.profileCard}>
+          {/* Company Logo */}
+          <View style={styles.logoContainer}>
+            {seeUser && seeUser?.company?.logo ? (
+              <Image
+                source={{
+                  uri: `https://bc.exploreanddo.com/${seeUser.company.logo}`,
+                }}
+                style={styles.companyLogo}
+              />
+            ) : (
+              <Image
+                source={require("../../../../assets/social/speclogo.png")}
+                style={styles.companyLogo}
+              />
+            )}
+          </View>
+
+          {/* Profile Image */}
+          <View style={styles.profileImageContainer}>
+            {seeUser && seeUser?.user?.userImage ? (
+              <Image
+                source={{
+                  uri: `https://bc.exploreanddo.com/${seeUser.user.userImage}`,
+                }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <Image
+                source={require("../../../../assets/user.jpg")}
+                style={styles.profileImage}
+              />
+            )}
+          </View>
+
+          {/* Name and Title */}
+          <Text style={styles.nameText}>
+            {seeUser?.user?.user_details?.businessname ||
+              `${seeUser?.user?.firstname || ""} ${seeUser?.user?.lastname || ""}`}
+          </Text>
+          <Text style={styles.titleText}>
+            {seeUser?.user?.user_details?.title || "Employee"}
+          </Text>
+          <Text style={styles.companyText}>
+            {seeUser?.company?.companyname || 
+             seeUser?.user?.user_details?.company_name || 
+             "Company Name"}
+          </Text>
+        </View>
+
         {/* About Me Section */}
-        <View style={styles.aboutSection}>
+        <View style={styles.aboutCard}>
           <Text style={styles.sectionTitle}>About Me</Text>
-          <View style={styles.divider} />
           <Text style={styles.aboutText}>
             {seeUser?.user?.user_details?.headline || 
-             "Lorem ipsum dolor sit amet consectetur adipiscing elit."}
+             "Professional description and background information."}
           </Text>
         </View>
 
         {/* Contact Information */}
-        <View style={styles.contactSection}>
+        <View style={styles.contactCard}>
           <TouchableOpacity style={styles.contactItem} onPress={handlePhonePress}>
-            <View style={styles.contactIconContainer}>
-              <MaterialIcons name="phone" size={20} color="#2C3E50" />
-            </View>
+            <MaterialIcons name="phone" size={20} color="#666" />
             <Text style={styles.contactText}>
-              {seeUser?.user?.phone || "6265898600"}
+              {seeUser?.user?.phone || "0265536900"}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
-            <View style={styles.contactIconContainer}>
-              <MaterialIcons name="email" size={20} color="#2C3E50" />
-            </View>
+            <MaterialIcons name="email" size={20} color="#666" />
             <Text style={styles.contactText}>
               {seeUser?.user?.email || "alan@gmail.com"}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.contactItem} onPress={handleWebsitePress}>
-            <View style={styles.contactIconContainer}>
-              <MaterialCommunityIcons name="web" size={20} color="#2C3E50" />
-            </View>
+            <MaterialCommunityIcons name="web" size={20} color="#666" />
             <Text style={styles.contactText}>
-              {seeUser?.company?.website || "https://engloremundi"}
+              {seeUser?.company?.website || "https://exploreanddo.id"}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.contactItem} onPress={handleLocationPress}>
-            <View style={styles.contactIconContainer}>
-              <MaterialIcons name="location-on" size={20} color="#2C3E50" />
-            </View>
+            <MaterialIcons name="location-on" size={20} color="#666" />
             <Text style={styles.contactText}>
               {seeUser?.user?.user_details?.address || "Hyderabad"}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Social Media Section */}
-        {validSocialItems.length > 0 && (
-          <View style={styles.socialSection}>
-            <Text style={styles.sectionTitle}>Connect with me</Text>
-            <View style={styles.divider} />
-            <View style={styles.socialMediaGrid}>
-              {socialKeys
-                .filter((type) => {
-                  const value = social[type];
-                  return value !== "null" && value !== null && value !== "";
-                })
-                .map((type) => {
-                  const value = social[type];
-                  const imageSource = imageSources[type];
-                  return (
-                    <TouchableOpacity 
-                      key={type} 
-                      style={styles.itemContainer}
-                      onPress={() => handleSocialMediaPress(type)}
-                    >
-                      <View style={styles.socialButton}>
-                        <Image source={imageSource} style={styles.socialIcon} />
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-            </View>
+        {/* Social Media Grid */}
+        <View style={styles.socialCard}>
+          <View style={styles.socialGrid}>
+            {socialKeys
+              .filter((type) => {
+                const value = social[type];
+                return value !== "null" && value !== null && value !== "";
+              })
+              .slice(0, 12) // Limit to 12 icons to match screenshot
+              .map((type) => {
+                const imageSource = imageSources[type];
+                return (
+                  <TouchableOpacity 
+                    key={type} 
+                    style={styles.socialIconContainer}
+                    onPress={() => handleSocialMediaPress(type)}
+                  >
+                    <Image source={imageSource} style={styles.socialIcon} />
+                  </TouchableOpacity>
+                );
+              })}
           </View>
-        )}
+        </View>
 
-        {/* NFC Actions */}
-        <View style={styles.nfcSection}>
-          <View style={styles.nfcButtonsContainer}>
-            <TouchableOpacity
-              style={[styles.nfcButton, { backgroundColor: "#2C3E50" }]}
-              onPress={() => {
-                handleClickVibration();
-                Toast.show({
-                  type: "info",
-                  text1: "NFC Write",
-                  text2: "NFC functionality coming soon",
-                  position: "top",
-                  visibilityTime: 3000,
-                });
-              }}
-            >
-              <MaterialCommunityIcons name="cellphone-nfc" size={16} color="white" />
-              <Text style={styles.nfcButtonText}>Write to NFC</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              style={[styles.nfcButton, { backgroundColor: "#2C3E50" }]}
-              onPress={() => {
-                handleClickVibration();
-                const userData = `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`;
-                const qrData = JSON.stringify(userData);
-                navigation.navigate("Share Profile", { qrData });
-              }}
-            >
-              <MaterialIcons name="share" size={16} color="white" />
-              <Text style={styles.nfcButtonText}>Share</Text>
-            </TouchableOpacity>
-          </View>
+        {/* Action Buttons */}
+        <View style={styles.actionButtonsContainer}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              handleClickVibration();
+              Toast.show({
+                type: "info",
+                text1: "NFC Write",
+                text2: "NFC functionality coming soon",
+                position: "top",
+                visibilityTime: 3000,
+              });
+            }}
+          >
+            <MaterialCommunityIcons name="cellphone-nfc" size={20} color="#666" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleShareProfile}
+          >
+            <MaterialIcons name="share" size={20} color="#666" />
+          </TouchableOpacity>
         </View>
 
         {/* Save Contact Button */}
-        <View style={styles.saveContactSection}>
-          <TouchableOpacity style={styles.saveContactButton}>
-            <MaterialIcons name="person-add" size={24} color="#FFFFFF" />
-            <Text style={styles.saveContactText}>Save Contact</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.saveContactButton}>
+          <Text style={styles.saveContactText}>Save Contact</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -645,204 +536,178 @@ export default Theme7;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#F5F5F5",
   },
   scrollContainer: {
     flex: 1,
   },
-  headerSection: {
-    height: Dimensions.get("window").height * 0.35,
-    position: "relative",
-  },
-  headerGradient: {
-    flex: 1,
-    paddingTop: 40,
+  scrollContent: {
     paddingHorizontal: 20,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-    alignItems: "center",
+    paddingTop: 20,
+    paddingBottom: 100, // Extra padding for footer
   },
-  profileImageContainer: {
+  profileCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    padding: 20,
     alignItems: "center",
-    marginTop: 10,
-  },
-  profileImageWrapper: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: "#FFFFFF",
+    marginBottom: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
-    alignItems: "center",
+    position: "relative",
+  },
+  logoContainer: {
+    position: "absolute",
+    top: 15,
+    left: 15,
+  },
+  companyLogo: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+  },
+  profileImageContainer: {
+    marginTop: 20,
+    marginBottom: 15,
   },
   profileImage: {
-    width: 94,
-    height: 94,
-    borderRadius: 47,
-  },
-  nameContainer: {
-    alignItems: "center",
-    marginTop: 15,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 3,
+    borderColor: "#E0E0E0",
   },
   nameText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "700",
-    color: "#2C3E50",
+    color: "#333",
     textAlign: "center",
     marginBottom: 5,
   },
   titleText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "500",
-    color: "#7F8C8D",
+    color: "#666",
     textAlign: "center",
-    marginBottom: 10,
-  },
-  companyBadge: {
-    backgroundColor: "#ECF0F1",
-    paddingHorizontal: 15,
-    paddingVertical: 6,
-    borderRadius: 15,
+    marginBottom: 5,
   },
   companyText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#2C3E50",
+    fontSize: 12,
+    fontWeight: "400",
+    color: "#999",
+    textAlign: "center",
   },
-  aboutSection: {
+  aboutCard: {
     backgroundColor: "#FFFFFF",
-    marginHorizontal: 20,
-    marginTop: 20,
+    borderRadius: 15,
     padding: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#ECF0F1",
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#2C3E50",
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 10,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#ECF0F1",
-    marginBottom: 15,
   },
   aboutText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#7F8C8D",
+    color: "#666",
     fontWeight: "400",
   },
-  contactSection: {
-    marginHorizontal: 20,
-    marginTop: 20,
+  contactCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   contactItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 15,
     paddingVertical: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#ECF0F1",
-  },
-  contactIconContainer: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "#ECF0F1",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 15,
+    paddingHorizontal: 5,
   },
   contactText: {
-    fontSize: 15,
-    fontWeight: "500",
-    color: "#2C3E50",
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#333",
+    marginLeft: 15,
     flex: 1,
   },
-  socialSection: {
+  socialCard: {
     backgroundColor: "#FFFFFF",
-    marginHorizontal: 20,
-    marginTop: 20,
+    borderRadius: 15,
     padding: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#ECF0F1",
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  socialMediaGrid: {
-    marginTop: 10,
+  socialGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  itemContainer: {
-    margin: 6,
-  },
-  socialButton: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
+  socialIconContainer: {
+    width: (Dimensions.get("window").width - 80) / 6, // 6 icons per row with proper spacing
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F8F9F9",
+    marginBottom: 10,
   },
   socialIcon: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
   },
-  nfcSection: {
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  nfcButtonsContainer: {
+  actionButtonsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 10,
+    justifyContent: "space-around",
+    marginBottom: 20,
   },
-  nfcButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
+  actionButton: {
+    backgroundColor: "#FFFFFF",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 8,
-    gap: 8,
-  },
-  nfcButtonText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  saveContactSection: {
-    marginHorizontal: 20,
-    marginTop: 25,
-    marginBottom: 40,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   saveContactButton: {
-    flexDirection: "row",
+    backgroundColor: "#4CAF50",
+    borderRadius: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#2C3E50",
-    paddingVertical: 14,
-    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   saveContactText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",
-    marginLeft: 8,
   },
 });
-
-
