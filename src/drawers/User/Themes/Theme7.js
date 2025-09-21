@@ -430,6 +430,82 @@ const Theme7 = ({ navigation }) => {
           </View>
         </LinearGradient>
       </View>
+      <View style={styles.aboutSection}>
+          <Text style={styles.sectionTitle}>About Me</Text>
+          <View style={styles.divider} />
+          <Text style={styles.aboutText}>
+            {seeUser?.user?.user_details?.headline || 
+             "Lorem ipsum dolor sit amet consectetur adipiscing elit."}
+          </Text>
+        </View>
+        {/* Contact Information */}
+        <View style={styles.contactSection}>
+          <TouchableOpacity style={styles.contactItem} onPress={handlePhonePress}>
+            <View style={styles.contactIconContainer}>
+              <MaterialIcons name="phone" size={20} color="#2C3E50" />
+            </View>
+            <Text style={styles.contactText}>
+              {seeUser?.user?.phone || "6265898600"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
+            <View style={styles.contactIconContainer}>
+              <MaterialIcons name="email" size={20} color="#2C3E50" />
+            </View>
+            <Text style={styles.contactText}>
+              {seeUser?.user?.email || "alan@gmail.com"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.contactItem} onPress={handleWebsitePress}>
+            <View style={styles.contactIconContainer}>
+              <MaterialCommunityIcons name="web" size={20} color="#2C3E50" />
+            </View>
+            <Text style={styles.contactText}>
+              {seeUser?.company?.website || "https://engloremundi"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.contactItem} onPress={handleLocationPress}>
+            <View style={styles.contactIconContainer}>
+              <MaterialIcons name="location-on" size={20} color="#2C3E50" />
+            </View>
+            <Text style={styles.contactText}>
+              {seeUser?.user?.user_details?.address || "Hyderabad"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Social Media Section */}
+        {validSocialItems.length > 0 && (
+          <View style={styles.socialSection}>
+            <Text style={styles.sectionTitle}>Connect with me</Text>
+            <View style={styles.divider} />
+            <View style={styles.socialMediaGrid}>
+              {socialKeys
+                .filter((type) => {
+                  const value = social[type];
+                  return value !== "null" && value !== null && value !== "";
+                })
+                .map((type) => {
+                  const value = social[type];
+                  const imageSource = imageSources[type];
+                  return (
+                    <TouchableOpacity 
+                      key={type} 
+                      style={styles.itemContainer}
+                      onPress={() => handleSocialMediaPress(type)}
+                    >
+                      <View style={styles.socialButton}>
+                        <Image source={imageSource} style={styles.socialIcon} />
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+            </View>
+          </View>
+        )}
 
       <ScrollView
         style={styles.scrollContainer}
