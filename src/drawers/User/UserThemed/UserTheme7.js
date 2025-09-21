@@ -14,7 +14,6 @@ const UserTheme7 = ({ navigation }) => {
       end={[0, 1]}
     >
       <Theme7 navigation={navigation} />
-      
       <Footer navigation={navigation} />
     </LinearGradient>
   );
