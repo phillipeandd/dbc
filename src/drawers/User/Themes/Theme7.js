@@ -8,6 +8,8 @@ import {
   RefreshControl,
   Image,
   Linking,
+  FlatList,
+  ImageBackground,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -18,6 +20,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthProvider";
+import NfcComponent from "../../../components/NfcComponent";
 
 const Theme7 = ({ navigation }) => {
   const { width, height } = Dimensions.get("window");
@@ -346,6 +349,24 @@ const Theme7 = ({ navigation }) => {
     });
   };
 
+  const renderItem = ({ item }) => {
+    const { type, value } = item;
+    if (!value || value === "null" || value === "") {
+      return null;
+    }
+    const imageSource = imageSources[type];
+    return (
+      <TouchableOpacity style={styles.itemContainer}>
+        <TouchableOpacity
+          style={styles.socialButton}
+          onPress={() => handleSocialMediaPress(type)}
+        >
+          <Image source={imageSource} style={styles.socialIcon} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
+  };
+
   const imageSources = {
     whatsapp: require("../../../../assets/social/whatsapp.gif"),
     instagram: require("../../../../assets/social/instagram.gif"),
@@ -471,22 +492,26 @@ const Theme7 = ({ navigation }) => {
           <Text style={styles.sectionTitle}>Connect with me</Text>
           <View style={styles.divider} />
           <View style={styles.socialMediaGrid}>
-            <View style={styles.socialGridContainer}>
-              {validSocialItems.map((type) => (
-                <TouchableOpacity 
-                  key={type} 
-                  style={styles.socialItemContainer}
-                  onPress={() => handleSocialMediaPress(type)}
-                >
-                  <View style={styles.socialButton}>
-                    <Image source={imageSources[type]} style={styles.socialIcon} />
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <FlatList
+              data={socialKeys
+                .filter((type) => {
+                  const value = social[type];
+                  return value !== "null" && value !== null && value !== "";
+                })
+                .map((type) => ({ type, value: social[type] }))}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.type}
+              numColumns={4}
+              contentContainerStyle={styles.flatListContainer}
+            />
           </View>
         </View>
       )}
+
+      {/* NFC Component */}
+      <View style={styles.nfcSection}>
+        <NfcComponent navigation={navigation} />
+      </View>
 
       {/* Save Contact Button */}
       <View style={styles.saveContactSection}>
@@ -644,7 +669,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "center",
   },
-  socialItemContainer: {
+  itemContainer: {
     margin: 6,
   },
   socialButton: {
@@ -658,6 +683,15 @@ const styles = StyleSheet.create({
   socialIcon: {
     width: 25,
     height: 25,
+  },
+  flatListContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  nfcSection: {
+    marginHorizontal: 20,
+    marginTop: 20,
   },
   saveContactSection: {
     marginHorizontal: 20,
