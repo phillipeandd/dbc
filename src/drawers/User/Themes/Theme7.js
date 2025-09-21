@@ -20,7 +20,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 import { useAuth } from "../../../context/AuthProvider";
-import NfcComponent from "../../../components/NfcComponent";
 
 const Theme7 = ({ navigation }) => {
   const { width, height } = Dimensions.get("window");
@@ -388,12 +387,7 @@ const Theme7 = ({ navigation }) => {
   );
 
   return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
+    <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.headerSection}>
         <LinearGradient
@@ -437,90 +431,136 @@ const Theme7 = ({ navigation }) => {
         </LinearGradient>
       </View>
 
-      {/* About Me Section */}
-      <View style={styles.aboutSection}>
-        <Text style={styles.sectionTitle}>About Me</Text>
-        <View style={styles.divider} />
-        <Text style={styles.aboutText}>
-          {seeUser?.user?.user_details?.headline || 
-           "Lorem ipsum dolor sit amet consectetur adipiscing elit."}
-        </Text>
-      </View>
-
-      {/* Contact Information */}
-      <View style={styles.contactSection}>
-        <TouchableOpacity style={styles.contactItem} onPress={handlePhonePress}>
-          <View style={styles.contactIconContainer}>
-            <MaterialIcons name="phone" size={20} color="#2C3E50" />
-          </View>
-          <Text style={styles.contactText}>
-            {seeUser?.user?.phone || "6265898600"}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
-          <View style={styles.contactIconContainer}>
-            <MaterialIcons name="email" size={20} color="#2C3E50" />
-          </View>
-          <Text style={styles.contactText}>
-            {seeUser?.user?.email || "alan@gmail.com"}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.contactItem} onPress={handleWebsitePress}>
-          <View style={styles.contactIconContainer}>
-            <MaterialCommunityIcons name="web" size={20} color="#2C3E50" />
-          </View>
-          <Text style={styles.contactText}>
-            {seeUser?.company?.website || "https://engloremundi"}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.contactItem} onPress={handleLocationPress}>
-          <View style={styles.contactIconContainer}>
-            <MaterialIcons name="location-on" size={20} color="#2C3E50" />
-          </View>
-          <Text style={styles.contactText}>
-            {seeUser?.user?.user_details?.address || "Hyderabad"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Social Media Section */}
-      {validSocialItems.length > 0 && (
-        <View style={styles.socialSection}>
-          <Text style={styles.sectionTitle}>Connect with me</Text>
+      <ScrollView
+        style={styles.scrollContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        {/* About Me Section */}
+        <View style={styles.aboutSection}>
+          <Text style={styles.sectionTitle}>About Me</Text>
           <View style={styles.divider} />
-          <View style={styles.socialMediaGrid}>
-            <FlatList
-              data={socialKeys
+          <Text style={styles.aboutText}>
+            {seeUser?.user?.user_details?.headline || 
+             "Lorem ipsum dolor sit amet consectetur adipiscing elit."}
+          </Text>
+        </View>
+
+        {/* Contact Information */}
+        <View style={styles.contactSection}>
+          <TouchableOpacity style={styles.contactItem} onPress={handlePhonePress}>
+            <View style={styles.contactIconContainer}>
+              <MaterialIcons name="phone" size={20} color="#2C3E50" />
+            </View>
+            <Text style={styles.contactText}>
+              {seeUser?.user?.phone || "6265898600"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
+            <View style={styles.contactIconContainer}>
+              <MaterialIcons name="email" size={20} color="#2C3E50" />
+            </View>
+            <Text style={styles.contactText}>
+              {seeUser?.user?.email || "alan@gmail.com"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.contactItem} onPress={handleWebsitePress}>
+            <View style={styles.contactIconContainer}>
+              <MaterialCommunityIcons name="web" size={20} color="#2C3E50" />
+            </View>
+            <Text style={styles.contactText}>
+              {seeUser?.company?.website || "https://engloremundi"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.contactItem} onPress={handleLocationPress}>
+            <View style={styles.contactIconContainer}>
+              <MaterialIcons name="location-on" size={20} color="#2C3E50" />
+            </View>
+            <Text style={styles.contactText}>
+              {seeUser?.user?.user_details?.address || "Hyderabad"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Social Media Section */}
+        {validSocialItems.length > 0 && (
+          <View style={styles.socialSection}>
+            <Text style={styles.sectionTitle}>Connect with me</Text>
+            <View style={styles.divider} />
+            <View style={styles.socialMediaGrid}>
+              {socialKeys
                 .filter((type) => {
                   const value = social[type];
                   return value !== "null" && value !== null && value !== "";
                 })
-                .map((type) => ({ type, value: social[type] }))}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.type}
-              numColumns={4}
-              contentContainerStyle={styles.flatListContainer}
-            />
+                .map((type) => {
+                  const value = social[type];
+                  const imageSource = imageSources[type];
+                  return (
+                    <TouchableOpacity 
+                      key={type} 
+                      style={styles.itemContainer}
+                      onPress={() => handleSocialMediaPress(type)}
+                    >
+                      <View style={styles.socialButton}>
+                        <Image source={imageSource} style={styles.socialIcon} />
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+            </View>
+          </View>
+        )}
+
+        {/* NFC Actions */}
+        <View style={styles.nfcSection}>
+          <View style={styles.nfcButtonsContainer}>
+            <TouchableOpacity
+              style={[styles.nfcButton, { backgroundColor: "#2C3E50" }]}
+              onPress={() => {
+                handleClickVibration();
+                Toast.show({
+                  type: "info",
+                  text1: "NFC Write",
+                  text2: "NFC functionality coming soon",
+                  position: "top",
+                  visibilityTime: 3000,
+                });
+              }}
+            >
+              <MaterialCommunityIcons name="cellphone-nfc" size={16} color="white" />
+              <Text style={styles.nfcButtonText}>Write to NFC</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={[styles.nfcButton, { backgroundColor: "#2C3E50" }]}
+              onPress={() => {
+                handleClickVibration();
+                const userData = `https://bc.exploreanddo.com/get-web-nfc-user/${userId}`;
+                const qrData = JSON.stringify(userData);
+                navigation.navigate("Share Profile", { qrData });
+              }}
+            >
+              <MaterialIcons name="share" size={16} color="white" />
+              <Text style={styles.nfcButtonText}>Share</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      )}
 
-      {/* NFC Component */}
-      <View style={styles.nfcSection}>
-        <NfcComponent navigation={navigation} />
-      </View>
-
-      {/* Save Contact Button */}
-      <View style={styles.saveContactSection}>
-        <TouchableOpacity style={styles.saveContactButton}>
-          <MaterialIcons name="person-add" size={24} color="#FFFFFF" />
-          <Text style={styles.saveContactText}>Save Contact</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        {/* Save Contact Button */}
+        <View style={styles.saveContactSection}>
+          <TouchableOpacity style={styles.saveContactButton}>
+            <MaterialIcons name="person-add" size={24} color="#FFFFFF" />
+            <Text style={styles.saveContactText}>Save Contact</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -530,6 +570,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  scrollContainer: {
+    flex: 1,
   },
   headerSection: {
     height: Dimensions.get("window").height * 0.35,
@@ -663,8 +706,6 @@ const styles = StyleSheet.create({
   },
   socialMediaGrid: {
     marginTop: 10,
-  },
-  socialGridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
@@ -684,14 +725,28 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
-  flatListContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   nfcSection: {
     marginHorizontal: 20,
     marginTop: 20,
+  },
+  nfcButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  nfcButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  nfcButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
   },
   saveContactSection: {
     marginHorizontal: 20,
